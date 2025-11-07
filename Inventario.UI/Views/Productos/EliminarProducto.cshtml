@@ -1,0 +1,44 @@
+﻿@model Inventario.Abstracciones.ModelosParaUI.ProductoDto
+@{
+    ViewBag.Title = "Confirmar Eliminación";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-8">
+            <h2 class="mb-4">@ViewBag.Title</h2>
+            <div class="alert alert-danger">
+                <strong>¡ATENCIÓN!</strong> ¿Está seguro que desea **ELIMINAR** este producto de forma permanente?
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0">Detalles del Producto a Eliminar</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.SKU)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.SKU)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Nombre)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Nombre)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Marca)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Marca)</dd>
+                    </dl>
+                </div>
+            </div>
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Id)
+
+                <div class="d-flex justify-content-start gap-3 mt-4">
+                    <input type="submit" value="Sí, Eliminar" class="btn btn-danger btn-lg" />
+                    @Html.ActionLink("Cancelar", "ListarProductos", "Productos", null, new { @class = "btn btn-secondary btn-lg" })
+                </div>
+            }
+        </div>
+    </div>
+</div>

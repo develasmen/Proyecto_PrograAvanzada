@@ -1,0 +1,94 @@
+@model IEnumerable<Inventario.Abstracciones.ModelosParaUI.ClienteDto>
+@{
+    ViewBag.Title = "Gestión de Clientes";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<style>
+    .action-icons a {
+        font-size: 1.2rem;
+        text-decoration: none;
+        margin: 0 8px;
+    }
+</style>
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-dark text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0"><i class="fas fa-users me-2"></i>@ViewBag.Title</h3>
+                @Html.ActionLink(" Agregar Cliente", "CrearCliente", "Clientes", null, new { @class = "btn btn-primary" })
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Búsqueda por nombre o cédula -->
+            <div class="mb-3">
+                <form method="get" action="@Url.Action("BuscarClientes", "Clientes")" class="row g-3">
+                    <div class="col-md-10">
+                        <input type="text" name="criterio" class="form-control" placeholder="Buscar por nombre o cédula..." />
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-info w-100">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info text-center">
+                    <h4 class="alert-heading">No hay clientes registrados</h4>
+                    <p>Utiliza el botón "Agregar Cliente" para comenzar.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.CedulaJuridica)</th>
+                                <th>@Html.DisplayNameFor(model => model.Nombre)</th>
+                                <th>@Html.DisplayNameFor(model => model.Correo)</th>
+                                <th>@Html.DisplayNameFor(model => model.Telefono)</th>
+                                <th class="text-center">Estado</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@Html.DisplayFor(modelItem => item.CedulaJuridica)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Correo)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Telefono)</td>
+                                    <td class="text-center">
+                                        @if (item.Estado)
+                                        {
+                                            <span class="badge bg-success">Activo</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Inactivo</span>
+                                        }
+                                    </td>
+                                    <td class="text-center action-icons">
+                                        <a href="@Url.Action("EditarCliente", "Clientes", new { id = item.Id })" class="text-warning" title="Editar">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                        <a href="@Url.Action("DetallesCliente", "Clientes", new { id = item.Id })" class="text-info" title="Ver Detalles">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="@Url.Action("EliminarCliente", "Clientes", new { id = item.Id })" class="text-danger" title="Eliminar">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

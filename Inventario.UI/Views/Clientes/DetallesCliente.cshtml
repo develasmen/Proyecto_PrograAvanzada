@@ -1,0 +1,56 @@
+@model Inventario.Abstracciones.ModelosParaUI.ClienteDto
+@{
+    ViewBag.Title = "Detalles del Cliente";
+}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-8">
+            <h2 class="mb-4">@ViewBag.Title</h2>
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Cliente: @Html.DisplayFor(model => model.Nombre)</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.CedulaJuridica)</dt>
+                        <dd class="col-sm-8 border-bottom pb-2">@Html.DisplayFor(model => model.CedulaJuridica)</dd>
+
+                        <dt class="col-sm-4 text-muted pt-2">@Html.DisplayNameFor(model => model.Nombre)</dt>
+                        <dd class="col-sm-8 border-bottom pb-2 pt-2">@Html.DisplayFor(model => model.Nombre)</dd>
+
+                        <dt class="col-sm-4 text-muted pt-2">@Html.DisplayNameFor(model => model.Correo)</dt>
+                        <dd class="col-sm-8 border-bottom pb-2 pt-2">
+                            <a href="mailto:@Model.Correo">@Html.DisplayFor(model => model.Correo)</a>
+                        </dd>
+
+                        <dt class="col-sm-4 text-muted pt-2">@Html.DisplayNameFor(model => model.Telefono)</dt>
+                        <dd class="col-sm-8 border-bottom pb-2 pt-2">
+                            <a href="tel:@Model.Telefono">@Html.DisplayFor(model => model.Telefono)</a>
+                        </dd>
+
+                        <dt class="col-sm-4 text-muted pt-2">@Html.DisplayNameFor(model => model.Direccion)</dt>
+                        <dd class="col-sm-8 border-bottom pb-2 pt-2">@Html.DisplayFor(model => model.Direccion)</dd>
+
+                        <dt class="col-sm-4 text-muted pt-2">Fecha de Registro</dt>
+                        <dd class="col-sm-8 border-bottom pb-2 pt-2">@Model.FechaDeRegistro.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                        @if (Model.FechaDeModificacion.HasValue)
+                        {
+                            <dt class="col-sm-4 text-muted pt-2">Última Modificación</dt>
+                            <dd class="col-sm-8 border-bottom pb-2 pt-2">@Model.FechaDeModificacion.Value.ToString("dd/MM/yyyy HH:mm")</dd>
+                        }
+
+                        <dt class="col-sm-4 text-muted pt-2">@Html.DisplayNameFor(model => model.Estado)</dt>
+                        <dd class="col-sm-8 pt-2">
+                            @(Model.Estado ? Html.Raw("<span class='badge bg-success'>Activo</span>") : Html.Raw("<span class='badge bg-danger'>Inactivo</span>"))
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="mt-4 d-flex justify-content-start gap-2">
+                @Html.ActionLink("Editar", "EditarCliente", "Clientes", new { id = Model.Id }, new { @class = "btn btn-warning" })
+                @Html.ActionLink("Volver a la Lista", "ListarClientes", "Clientes", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    </div>
+</div>

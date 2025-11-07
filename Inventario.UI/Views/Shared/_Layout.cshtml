@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Mi aplicación ASP.NET</title>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/DataTable/dataTables.dataTables.css" rel="stylesheet" />
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden; 
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        .sidebar {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 230px;
+            height: 100%;
+            background-color: #0d1b2a; 
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            padding: 1rem;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+            .sidebar a {
+                color: white;
+                text-decoration: none;
+                margin: 0.5rem 0;
+                display: block;
+                width: 100%;
+                padding: 0.5rem 0.8rem;
+                border-radius: 8px;
+                transition: background-color 0.3s ease, padding-left 0.2s ease;
+            }
+
+                .sidebar a:hover {
+                    background-color: #1b263b;
+                    padding-left: 1.1rem;
+                }
+
+            .sidebar h4 {
+                width: 100%;
+                margin-bottom: 1rem;
+                text-align: center;
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+                .sidebar h4 a {
+                    display: inline-block;
+                    max-width: 100%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    color: white;
+                    font-weight: bold;
+                    letter-spacing: 1px;
+                    text-decoration: none;
+                    font-size: 1.2rem; 
+                }
+
+                    .sidebar h4 a span {
+                        color: #4dabf7; 
+                    }
+
+        .content {
+            flex-grow: 1;
+            margin-left: 220px; 
+            padding: 2rem;
+            height: 100vh;
+            overflow-y: auto; 
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h4>
+            <a href="@Url.Action("Index", "Home")" class="navbar-brand text-white">
+                🌎 PEDIDOS<span>360</span>
+            </a>
+        </h4>
+
+        <nav class="mt-3 w-100">
+            <ul class="nav flex-column w-100">
+                <li class="nav-item">
+                    @Html.ActionLink("📦 Productos", "ListarProductos", "Productos", new { area = "" }, new { @class = "nav-link text-white" })
+                </li>
+                <li class="nav-item">
+                    @Html.ActionLink("👥 Clientes", "ListarClientes", "Clientes", new { area = "" }, new { @class = "nav-link text-white" })
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Pedidos360</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/DataTable/dataTables.js"></script>
+    <script src="~/Scripts/SweetAlert/sweetalert2@11.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

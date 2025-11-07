@@ -1,0 +1,49 @@
+﻿@model Inventario.Abstracciones.ModelosParaUI.ProductoDto
+
+@{
+    ViewBag.Title = "Detalles del Producto";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-8">
+            <h2 class="mb-4">@ViewBag.Title</h2>
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Producto: @Html.DisplayFor(model => model.Nombre)</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-muted">@Html.DisplayNameFor(model => model.SKU)</dt>
+                        <dd class="col-sm-8 border-bottom pb-2">@Html.DisplayFor(model => model.SKU)</dd>
+
+                        <dt class="col-sm-4 text-muted pt-2">@Html.DisplayNameFor(model => model.Nombre)</dt>
+                        <dd class="col-sm-8 border-bottom pb-2 pt-2">@Html.DisplayFor(model => model.Nombre)</dd>
+
+                        <dt class="col-sm-4 text-muted pt-2">@Html.DisplayNameFor(model => model.Marca)</dt>
+                        <dd class="col-sm-8 border-bottom pb-2 pt-2">@Html.DisplayFor(model => model.Marca)</dd>
+
+                        <dt class="col-sm-4 text-muted pt-2">@Html.DisplayNameFor(model => model.Descripcion)</dt>
+                        <dd class="col-sm-8 border-bottom pb-2 pt-2">@Html.DisplayFor(model => model.Descripcion)</dd>
+
+                        <dt class="col-sm-4 text-muted pt-2">@Html.DisplayNameFor(model => model.Precio)</dt>
+                        <dd class="col-sm-8 border-bottom pb-2 pt-2">@Html.DisplayFor(model => model.Precio)</dd>
+
+                        <dt class="col-sm-4 text-muted pt-2">@Html.DisplayNameFor(model => model.CantidadEnStock)</dt>
+                        <dd class="col-sm-8 border-bottom pb-2 pt-2"><span class="badge bg-info text-dark">@Html.DisplayFor(model => model.CantidadEnStock) unidades</span></dd>
+
+                        <dt class="col-sm-4 text-muted pt-2">@Html.DisplayNameFor(model => model.Estado)</dt>
+                        <dd class="col-sm-8 pt-2">
+                            @(Model.Estado ? Html.Raw("<span class='badge bg-success'>Activo</span>") : Html.Raw("<span class='badge bg-danger'>Inactivo</span>"))
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-start gap-2">
+                @Html.ActionLink("Editar", "EditarProducto", "Productos", new { id = Model.Id }, new { @class = "btn btn-warning" })
+                @Html.ActionLink("Volver a la Lista", "ListarProductos", "Productos", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    </div>
+</div>
