@@ -5,16 +5,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Mi aplicación ASP.NET</title>
-
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     <link href="~/Content/DataTable/dataTables.dataTables.css" rel="stylesheet" />
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <style>
         html, body {
             height: 100%;
             margin: 0;
-            overflow: hidden; 
+            overflow: hidden;
         }
 
         body {
@@ -24,12 +23,12 @@
         }
 
         .sidebar {
-            position: fixed; 
+            position: fixed;
             top: 0;
             left: 0;
             width: 230px;
             height: 100%;
-            background-color: #0d1b2a; 
+            background-color: #0d1b2a;
             color: white;
             display: flex;
             flex-direction: column;
@@ -73,19 +72,71 @@
                     font-weight: bold;
                     letter-spacing: 1px;
                     text-decoration: none;
-                    font-size: 1.2rem; 
+                    font-size: 1.2rem;
                 }
 
                     .sidebar h4 a span {
-                        color: #4dabf7; 
+                        color: #4dabf7;
+                    }
+
+            /* Sección de usuario en sidebar */
+            .sidebar .user-section {
+                margin-top: auto;
+                width: 100%;
+                padding-top: 1rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+                .sidebar .user-section .user-info {
+                    display: flex;
+                    align-items: center;
+                    padding: 0.5rem;
+                    background-color: rgba(255, 255, 255, 0.1);
+                    border-radius: 8px;
+                    margin-bottom: 0.5rem;
+                }
+
+                    .sidebar .user-section .user-info i {
+                        font-size: 1.5rem;
+                        margin-right: 0.5rem;
+                    }
+
+                    .sidebar .user-section .user-info span {
+                        font-size: 0.9rem;
+                        font-weight: 500;
+                    }
+
+                .sidebar .user-section .btn-logout {
+                    width: 100%;
+                    padding: 0.5rem;
+                    background-color: #dc3545;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: background-color 0.3s ease;
+                }
+
+                    .sidebar .user-section .btn-logout:hover {
+                        background-color: #c82333;
+                    }
+
+                .sidebar .user-section .auth-links a {
+                    text-align: center;
+                    background-color: rgba(77, 171, 247, 0.2);
+                    margin: 0.3rem 0;
+                }
+
+                    .sidebar .user-section .auth-links a:hover {
+                        background-color: rgba(77, 171, 247, 0.4);
                     }
 
         .content {
             flex-grow: 1;
-            margin-left: 220px; 
+            margin-left: 220px;
             padding: 2rem;
             height: 100vh;
-            overflow-y: auto; 
+            overflow-y: auto;
         }
 
         footer {
@@ -102,17 +153,56 @@
                 🌎 PEDIDOS<span>360</span>
             </a>
         </h4>
-
         <nav class="mt-3 w-100">
             <ul class="nav flex-column w-100">
-                <li class="nav-item">
-                    @Html.ActionLink("📦 Productos", "ListarProductos", "Productos", new { area = "" }, new { @class = "nav-link text-white" })
-                </li>
-                <li class="nav-item">
-                    @Html.ActionLink("👥 Clientes", "ListarClientes", "Clientes", new { area = "" }, new { @class = "nav-link text-white" })
-                </li>
+                @if (User.IsInRole("Administrador"))
+                {
+                    <li class="nav-item">
+                        @Html.ActionLink("📦 Productos", "ListarProductos", "Productos", new { area = "" }, new { @class = "nav-link text-white" })
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("👥 Clientes", "ListarClientes", "Clientes", new { area = "" }, new { @class = "nav-link text-white" })
+                    </li>
+                }
+
+                @if (User.IsInRole("Cliente"))
+                {
+                    <li class="nav-item">
+                        @Html.ActionLink("🛒 Catálogo", "Index", "Catalogo", new { area = "" }, new { @class = "nav-link text-white" })
+                    </li>
+                }
             </ul>
         </nav>
+
+        <!-- Sección de Usuario / Login -->
+        <!-- Sección de Usuario / Login -->
+        <div class="user-section">
+            @if (Request.IsAuthenticated)
+            {
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span>@User.Identity.Name</span>
+                </div>
+
+                <form action="@Url.Action("LogOff", "Account")" method="post" id="logoutForm">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </button>
+                </form>
+            }
+            else
+            {
+                <div class="auth-links">
+                    <a href="@Url.Action("Login", "Account")">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </a>
+                    <a href="@Url.Action("Register", "Account")">
+                        <i class="fas fa-user-plus"></i> Registrarse
+                    </a>
+                </div>
+            }
+        </div>
     </div>
 
     <div class="content">

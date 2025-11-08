@@ -1,0 +1,215 @@
+@model Inventario.UI.Controllers.RegisterViewModel
+@{
+    ViewBag.Title = "Registro";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        background-color: #f8f9fa;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    body {
+        display: flex;
+    }
+
+
+    .content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin-left: 220px;
+        overflow: visible;
+    }
+
+
+    .register-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #f8f9fa;
+        padding: 40px 20px;
+        transform: translateX(-110px); 
+    }
+
+    .register-container {
+        width: 100%;
+        max-width: 750px;
+    }
+
+    .register-card {
+        width: 100%;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        background: white;
+        overflow: hidden;
+        margin-bottom: 30px; 
+    }
+
+    .register-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+    }
+
+    .register-body {
+        padding: 40px 30px;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+    }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+    .btn-register {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 12px;
+        font-weight: bold;
+        width: 100%;
+        transition: all 0.2s ease;
+    }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+    footer {
+        background-color: #f8f9fa;
+        text-align: center;
+        padding: 15px 0;
+        border-top: 1px solid #ddd;
+        width: 100%;
+        margin-top: auto;
+    }
+
+   
+    @@media (max-width: 768px) {
+        .register-container {
+            max-width: 100%;
+            margin: 0 10px;
+        }
+
+        .register-body {
+            padding: 25px 20px;
+        }
+
+        .register-wrapper {
+            transform: none; 
+            margin-left: 0;
+        }
+    }
+</style>
+
+<div class="content">
+    <div class="register-wrapper">
+        <div class="register-container">
+            <div class="card register-card">
+                <div class="register-header">
+                    <i class="fas fa-user-plus fa-3x mb-3"></i>
+                    <h2 class="mb-0">Crear Cuenta</h2>
+                </div>
+                <div class="register-body">
+                    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <h4 class="mb-4 text-center">Regístrate para acceder a Pedidos360</h4>
+                        <hr />
+                        @Html.ValidationSummary("", new { @class = "text-danger" })
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.NombreCompleto, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.NombreCompleto, new { @class = "form-control", placeholder = "Ej: Juan Pérez" })
+                                @Html.ValidationMessageFor(m => m.NombreCompleto, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.Cedula, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.Cedula, new { @class = "form-control", placeholder = "Ej: 123456789" })
+                                @Html.ValidationMessageFor(m => m.Cedula, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(m => m.Email, new { @class = "form-label" })
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "correo@ejemplo.com" })
+                            </div>
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(m => m.Direccion, new { @class = "form-label" })
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                @Html.TextAreaFor(m => m.Direccion, new { @class = "form-control", rows = "2", placeholder = "Dirección completa" })
+                            </div>
+                            @Html.ValidationMessageFor(m => m.Direccion, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(m => m.UserName, new { @class = "form-label" })
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", placeholder = "Nombre de usuario" })
+                            </div>
+                            @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.Password, new { @class = "form-label" })
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Mínimo 6 caracteres" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.ConfirmPassword, new { @class = "form-label" })
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Repetir contraseña" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-register mt-3">
+                            <i class="fas fa-user-plus me-2"></i>Crear Cuenta
+                        </button>
+
+                        <div class="text-center mt-4">
+                            <p class="text-muted">¿Ya tienes cuenta?</p>
+                            @Html.ActionLink("Iniciar Sesión", "Login", null, new { @class = "btn btn-outline-secondary" })
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

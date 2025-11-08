@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace Inventario.UI.Controllers
 {
+    [Authorize(Roles = "Administrador")] //Control de usuarios (solo lo puede ver el admin)
     public class ProductosController : Controller
     {
         private readonly ProductoLN _productoLN;
