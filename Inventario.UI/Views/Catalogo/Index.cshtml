@@ -1,0 +1,370 @@
+﻿@model List<Inventario.Abstracciones.ModelosParaUI.ProductoDto>
+
+@{
+    ViewBag.Title = "Catálogo de Productos";
+}
+
+<style>
+    .catalogo-container {
+        display: flex;
+        gap: 2rem;
+        height: calc(100vh - 150px);
+    }
+
+    .productos-section {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 1rem;
+    }
+
+    .productos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .producto-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 1.5rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .producto-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+    .producto-imagen {
+        width: 100%;
+        height: 180px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .producto-info h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+    }
+
+    .producto-marca {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .producto-precio {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #27ae60;
+        margin: 0.5rem 0;
+    }
+
+    .producto-stock {
+        font-size: 0.9rem;
+        color: #95a5a6;
+        margin-bottom: 1rem;
+    }
+
+    .stock-bajo {
+        color: #e74c3c;
+        font-weight: bold;
+    }
+
+    .btn-agregar {
+        width: 100%;
+        padding: 0.75rem;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s;
+    }
+
+        .btn-agregar:hover:not(:disabled) {
+            background: #2980b9;
+        }
+
+        .btn-agregar:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+    .carrito-section {
+        width: 400px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        position: sticky;
+        top: 0;
+        height: fit-content;
+        max-height: calc(100vh - 150px);
+    }
+
+    .carrito-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #ecf0f1;
+    }
+
+        .carrito-header h2 {
+            margin: 0;
+            color: #2c3e50;
+        }
+
+    .carrito-badge {
+        background: #e74c3c;
+        color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .carrito-items {
+        flex: 1;
+        overflow-y: auto;
+        margin-bottom: 1rem;
+        max-height: 400px;
+    }
+
+    .carrito-item {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .carrito-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 0.5rem;
+    }
+
+    .carrito-item-nombre {
+        font-weight: bold;
+        color: #2c3e50;
+        flex: 1;
+    }
+
+    .btn-eliminar {
+        background: none;
+        border: none;
+        color: #e74c3c;
+        cursor: pointer;
+        font-size: 1.2rem;
+        padding: 0;
+        margin-left: 0.5rem;
+    }
+
+    .carrito-item-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .cantidad-control {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: white;
+        border-radius: 6px;
+        padding: 0.25rem;
+    }
+
+    .btn-cantidad {
+        background: #3498db;
+        color: white;
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+        .btn-cantidad:hover {
+            background: #2980b9;
+        }
+
+    .cantidad-input {
+        width: 50px;
+        text-align: center;
+        border: none;
+        font-weight: bold;
+    }
+
+    .carrito-item-precio {
+        text-align: right;
+        color: #27ae60;
+        font-weight: bold;
+    }
+
+    .carrito-resumen {
+        border-top: 2px solid #ecf0f1;
+        padding-top: 1rem;
+    }
+
+    .resumen-linea {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .resumen-total {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #27ae60;
+    }
+
+    .btn-finalizar {
+        width: 100%;
+        padding: 1rem;
+        background: #27ae60;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: background 0.3s;
+    }
+
+        .btn-finalizar:hover:not(:disabled) {
+            background: #229954;
+        }
+
+        .btn-finalizar:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+    .btn-vaciar {
+        width: 100%;
+        padding: 0.75rem;
+        background: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 0.5rem;
+    }
+
+        .btn-vaciar:hover {
+            background: #c0392b;
+        }
+
+    .carrito-vacio {
+        text-align: center;
+        color: #95a5a6;
+        padding: 2rem;
+    }
+
+        .carrito-vacio i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+    .loading {
+        text-align: center;
+        padding: 2rem;
+        color: #7f8c8d;
+    }
+</style>
+
+<div class="container-fluid">
+    <h1><i class="fas fa-shopping-bag"></i> Catálogo de Productos</h1>
+    <hr />
+
+    <div class="catalogo-container">
+        <!-- Sección de Productos -->
+        <div class="productos-section">
+            <div class="productos-grid">
+                @foreach (var producto in Model)
+                {
+                    <div class="producto-card" data-producto-id="@producto.Id">
+                        <div class="producto-imagen">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="producto-info">
+                            <h3>@producto.Nombre</h3>
+                            <div class="producto-marca">@producto.Marca</div>
+                            <div class="producto-precio">₡@producto.Precio.ToString("N2")</div>
+                            <div class="producto-stock @(producto.CantidadEnStock < 10 ? "stock-bajo" : "")">
+                                Stock: <span class="stock-valor">@producto.CantidadEnStock</span> unidades
+                            </div>
+                            <button class="btn-agregar"
+                                    onclick="agregarAlCarrito(@producto.Id, '@producto.Nombre', @producto.Precio, @producto.CantidadEnStock)"
+                                    @(producto.CantidadEnStock == 0 ? "disabled" : "")>
+                                <i class="fas fa-cart-plus"></i> Agregar al Carrito
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Sección del Carrito -->
+        <div class="carrito-section">
+            <div class="carrito-header">
+                <h2><i class="fas fa-shopping-cart"></i> Mi Carrito</h2>
+                <div class="carrito-badge" id="carrito-badge">0</div>
+            </div>
+
+            <div class="carrito-items" id="carrito-items">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Cargando carrito...</p>
+                </div>
+            </div>
+
+            <div class="carrito-resumen">
+                <div class="resumen-linea">
+                    <span>Total de productos:</span>
+                    <span id="total-productos">0</span>
+                </div>
+                <div class="resumen-linea">
+                    <span>Total de items:</span>
+                    <span id="total-items">0</span>
+                </div>
+                <div class="resumen-linea resumen-total">
+                    <span>TOTAL:</span>
+                    <span id="total-precio">₡0.00</span>
+                </div>
+                <button class="btn-finalizar" id="btn-finalizar" disabled onclick="finalizarCompra()">
+                    <i class="fas fa-check-circle"></i> Finalizar Compra
+                </button>
+                <button class="btn-vaciar" id="btn-vaciar" onclick="vaciarCarrito()" style="display: none;">
+                    <i class="fas fa-trash"></i> Vaciar Carrito
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/Catalogo/carrito.js"></script>
+}
