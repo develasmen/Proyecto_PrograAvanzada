@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Gestión de Productos";
+    var hayRegistros = Model.Any();
 }
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
@@ -12,64 +13,88 @@
         text-decoration: none;
         margin: 0 8px;
     }
+
+    .busqueda-icono {
+        background-color: #f8f9fa;
+        border-right: none;
+    }
+
+    #busqueda-productos {
+        border-left: none;
+        box-shadow: none;
+    }
 </style>
 
 <div class="container mt-5">
     <div class="card shadow-lg">
         <div class="card-header bg-dark text-white">
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
                 <h3 class="mb-0"><i class="fas fa-boxes-stacked me-2"></i>@ViewBag.Title</h3>
-                @Html.ActionLink(" Agregar Producto", "CrearProducto", "Productos", null, new { @class = "btn btn-primary" })
+                <div class="d-flex flex-column flex-md-row align-items-md-center gap-2 w-100 w-lg-auto">
+                    <div class="input-group shadow-sm">
+                        <span class="input-group-text busqueda-icono"><i class="fas fa-search"></i></span>
+                        <input type="text" id="busqueda-productos" class="form-control" placeholder="Buscar por nombre, marca o SKU..." autocomplete="off" />
+                    </div>
+                    @Html.ActionLink(" Agregar Producto", "CrearProducto", "Productos", null, new { @class = "btn btn-primary w-100 w-md-auto" })
+                </div>
             </div>
         </div>
         <div class="card-body">
-            @if (!Model.Any())
-            {
-                <div class="alert alert-info text-center">
-                    <h4 class="alert-heading">No hay productos registrados</h4>
-                    <p>Utiliza el botón "Agregar Producto" para comenzar.</p>
-                </div>
-            }
-            else
-            {
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
+            <div id="productos-loading" class="text-center text-muted my-3 d-none">
+                <i class="fas fa-spinner fa-spin me-2"></i>Buscando productos...
+            </div>
+
+            <div id="productos-empty" class="alert alert-info text-center @(hayRegistros ? "d-none" : string.Empty)">
+                <h4 class="alert-heading">No hay productos registrados</h4>
+                <p>Utiliza el botón "Agregar Producto" para comenzar.</p>
+            </div>
+
+            <div id="productos-error" class="alert alert-danger text-center d-none">
+                <h4 class="alert-heading">Ocurrió un error</h4>
+                <p>No pudimos obtener los productos. Inténtalo de nuevo en unos segundos.</p>
+            </div>
+
+            <div class="table-responsive @(hayRegistros ? string.Empty : "d-none")" id="contenedor-tabla-productos">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.SKU)</th>
+                            <th>@Html.DisplayNameFor(model => model.Nombre)</th>
+                            <th>@Html.DisplayNameFor(model => model.Marca)</th>
+                            <th>@Html.DisplayNameFor(model => model.Precio)</th>
+                            <th class="text-center">@Html.DisplayNameFor(model => model.CantidadEnStock)</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-productos-body">
+                        @foreach (var item in Model)
+                        {
                             <tr>
-                                <th>@Html.DisplayNameFor(model => model.SKU)</th>
-                                <th>@Html.DisplayNameFor(model => model.Nombre)</th>
-                                <th>@Html.DisplayNameFor(model => model.Marca)</th>
-                                <th>@Html.DisplayNameFor(model => model.Precio)</th>
-                                <th class="text-center">@Html.DisplayNameFor(model => model.CantidadEnStock)</th>
-                                <th class="text-center">Acciones</th>
+                                <td>@Html.DisplayFor(modelItem => item.SKU)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Marca)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Precio)</td>
+                                <td class="text-center">@Html.DisplayFor(modelItem => item.CantidadEnStock)</td>
+                                <td class="text-center action-icons">
+                                    <a href="@Url.Action("EditarProducto", "Productos", new { id = item.Id })" class="text-warning" title="Editar">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                    <a href="@Url.Action("DetallesProducto", "Productos", new { id = item.Id })" class="text-info" title="Ver Detalles">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("EliminarProducto", "Productos", new { id = item.Id })" class="text-danger" title="Eliminar">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>@Html.DisplayFor(modelItem => item.SKU)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Marca)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Precio)</td>
-                                    <td class="text-center">@Html.DisplayFor(modelItem => item.CantidadEnStock)</td>
-                                    <td class="text-center action-icons">
-                                        <a href="@Url.Action("EditarProducto", "Productos", new { id = item.Id })" class="text-warning" title="Editar">
-                                            <i class="fas fa-pencil-alt"></i>
-                                        </a>
-                                        <a href="@Url.Action("DetallesProducto", "Productos", new { id = item.Id })" class="text-info" title="Ver Detalles">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="@Url.Action("EliminarProducto", "Productos", new { id = item.Id })" class="text-danger" title="Eliminar">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            }
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
+@section scripts {
+    <script src="~/Scripts/Inventario/productos-admin.js"></script>
+}

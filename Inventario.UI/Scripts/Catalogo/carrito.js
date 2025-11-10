@@ -6,22 +6,30 @@
 // Estado global del carrito
 let carritoItems = [];
 let stockOriginal = {}; // Guardar el stock original de cada producto
+let catalogoRequest = null;
+let catalogoBusquedaTimer = null;
+const formateadorMoneda = window.Intl
+    ? new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' })
+    : null;
 
 // Inicialización cuando el documento está listo
 $(document).ready(function () {
     inicializarCarrito();
+    inicializarBusquedaCatalogo();
 });
 
 function inicializarCarrito() {
-    // Guarda el stock original de cada producto
+    registrarStockOriginalDesdeDom();
+    cargarCarrito();
+}
+
+function registrarStockOriginalDesdeDom() {
+    stockOriginal = {};
     $('.producto-card').each(function () {
         const productoId = $(this).data('producto-id');
-        const stockInicial = parseInt($(this).find('.stock-valor').text());
-        stockOriginal[productoId] = stockInicial;
+        const stockInicial = parseInt($(this).find('.stock-valor').text(), 10);
+        stockOriginal[productoId] = isNaN(stockInicial) ? 0 : stockInicial;
     });
-
-    // Carga el carrito existente
-    cargarCarrito();
 }
 
 // Cargar el carrito desde el servidor
@@ -39,6 +47,218 @@ function cargarCarrito() {
             console.error('Error al cargar el carrito:', xhr);
             mostrarCarritoVacio();
         }
+    });
+}
+
+// Inicializar la busqueda del catalogo
+function inicializarBusquedaCatalogo() {
+    const buscador = $('#busqueda-catalogo');
+    if (!buscador.length) {
+        return;
+    }
+
+    buscador.on('input', function () {
+        const termino = $(this).val();
+        if (catalogoBusquedaTimer) {
+            clearTimeout(catalogoBusquedaTimer);
+        }
+
+        catalogoBusquedaTimer = setTimeout(function () {
+            buscarProductosCatalogo(termino);
+        }, 350);
+    });
+}
+
+function buscarProductosCatalogo(termino) {
+    const grid = $('#productos-grid');
+    if (!grid.length) {
+        return;
+    }
+
+    if (catalogoRequest) {
+        catalogoRequest.abort();
+    }
+
+    toggleCatalogoLoading(true);
+    mostrarCatalogoError(false);
+
+    catalogoRequest = $.ajax({
+        url: '/api/productos/buscar',
+        type: 'GET',
+        data: {
+            termino: termino || '',
+            soloActivos: true,
+            soloConStock: true
+        },
+        success: function (data) {
+            renderProductosCatalogo(data || []);
+        },
+        error: function (xhr, status) {
+            if (status === 'abort') {
+                return;
+            }
+            const mensaje = xhr.responseJSON && xhr.responseJSON.Message
+                ? xhr.responseJSON.Message
+                : 'No se pudo cargar el catalogo. Intenta nuevamente.';
+            mostrarCatalogoError(true, mensaje);
+            mostrarCatalogoVacio(false);
+            mostrarGridCatalogo(false);
+        },
+        complete: function () {
+            toggleCatalogoLoading(false);
+            catalogoRequest = null;
+        }
+    });
+}
+
+function renderProductosCatalogo(productos) {
+    const grid = $('#productos-grid');
+    if (!grid.length) {
+        return;
+    }
+
+    if (!Array.isArray(productos) || productos.length === 0) {
+        grid.empty();
+        mostrarGridCatalogo(false);
+        mostrarCatalogoVacio(true);
+        actualizarStockOriginalDesdeListado([]);
+        return;
+    }
+
+    const tarjetas = productos.map(generarTarjetaProducto).join('');
+    grid.html(tarjetas);
+
+    mostrarCatalogoVacio(false);
+    mostrarGridCatalogo(true);
+    actualizarStockOriginalDesdeListado(productos);
+    actualizarStockVisible();
+}
+
+function generarTarjetaProducto(producto) {
+    const stockDisponible = producto.CantidadEnStock || 0;
+    const claseStock = stockDisponible < 10 ? 'stock-bajo' : '';
+    const botonDeshabilitado = stockDisponible === 0 ? 'disabled' : '';
+    const precioNumero = Number(producto.Precio) || 0;
+    const precioFormateado = formatearPrecio(precioNumero);
+    const nombreSeguro = escaparTextoJs(producto.Nombre);
+    const nombreVisible = escaparHtml(producto.Nombre) || 'Producto';
+    const marcaVisible = escaparHtml(producto.Marca);
+
+    return `
+        <div class="producto-card" data-producto-id="${producto.Id}">
+            <div class="producto-imagen">
+                <i class="fas fa-box"></i>
+            </div>
+            <div class="producto-info">
+                <h3>${nombreVisible}</h3>
+                <div class="producto-marca">${marcaVisible}</div>
+                <div class="producto-precio">${precioFormateado}</div>
+                <div class="producto-stock ${claseStock}">
+                    Stock: <span class="stock-valor">${stockDisponible}</span> unidades
+                </div>
+                <button class="btn-agregar"
+                        onclick="agregarAlCarrito(${producto.Id}, '${nombreSeguro}', ${precioNumero}, ${stockDisponible})"
+                        ${botonDeshabilitado}>
+                    <i class="fas fa-cart-plus"></i> Agregar al Carrito
+                </button>
+            </div>
+        </div>`;
+}
+
+function escaparTextoJs(texto) {
+    if (!texto) {
+        return '';
+    }
+    return texto
+        .toString()
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, '\\\'')
+        .replace(/"/g, '\\"');
+}
+
+function escaparHtml(texto) {
+    if (!texto) {
+        return '';
+    }
+
+    const mapa = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    };
+
+    return texto.toString().replace(/[&<>"']/g, (caracter) => mapa[caracter] || caracter);
+}
+
+function formatearPrecio(valor) {
+    const numero = Number(valor) || 0;
+    if (formateadorMoneda) {
+        return formateadorMoneda.format(numero);
+    }
+    return '\u20a1' + numero.toFixed(2);
+}
+
+function toggleCatalogoLoading(mostrar) {
+    const loading = $('#catalogo-loading');
+    if (!loading.length) {
+        return;
+    }
+
+    if (mostrar) {
+        loading.removeClass('d-none');
+    } else {
+        loading.addClass('d-none');
+    }
+}
+
+function mostrarCatalogoError(mostrar, mensaje) {
+    const contenedor = $('#catalogo-error');
+    if (!contenedor.length) {
+        return;
+    }
+
+    if (mostrar) {
+        if (mensaje) {
+            contenedor.find('p').text(mensaje);
+        }
+        contenedor.removeClass('d-none');
+    } else {
+        contenedor.addClass('d-none');
+    }
+}
+
+function mostrarCatalogoVacio(mostrar) {
+    const contenedor = $('#catalogo-vacio');
+    if (!contenedor.length) {
+        return;
+    }
+
+    if (mostrar) {
+        contenedor.removeClass('d-none');
+    } else {
+        contenedor.addClass('d-none');
+    }
+}
+
+function mostrarGridCatalogo(mostrar) {
+    const grid = $('#productos-grid');
+    if (!grid.length) {
+        return;
+    }
+
+    if (mostrar) {
+        grid.removeClass('d-none');
+    } else {
+        grid.addClass('d-none');
+    }
+}
+
+function actualizarStockOriginalDesdeListado(productos) {
+    stockOriginal = {};
+    productos.forEach(producto => {
+        stockOriginal[producto.Id] = producto.CantidadEnStock || 0;
     });
 }
 
@@ -60,8 +280,8 @@ function agregarAlCarrito(productoId, nombre, precio, stockDisponible) {
             ProductoId: productoId,
             Cantidad: 1
         }),
-        success: function (data) {
-            mostrarExito('¡Agregado!', nombre + ' agregado al carrito');
+        success: function () {
+            mostrarExito('Agregado', nombre + ' agregado al carrito');
             cargarCarrito(); // Recargar para que se actualice todo
         },
         error: function (xhr) {
@@ -84,9 +304,9 @@ function actualizarCantidad(carritoId, nuevaCantidad, productoId) {
     const itemCarrito = carritoItems.find(item => item.Id === carritoId);
     if (!itemCarrito) return;
 
-    const stockOriginalProducto = stockOriginal[productoId];
+    const stockOriginalProducto = stockOriginal[productoId] || 0;
     const totalEnCarrito = calcularTotalEnCarritoExceptoItem(productoId, carritoId);
-    const stockDisponibleParaEsteItem = stockOriginalProducto - totalEnCarrito;
+    const stockDisponibleParaEsteItem = Math.max(stockOriginalProducto - totalEnCarrito, 0);
 
     if (nuevaCantidad > stockDisponibleParaEsteItem) {
         mostrarError(`Stock insuficiente. Disponible: ${stockDisponibleParaEsteItem} unidades`);
@@ -252,12 +472,13 @@ function actualizarStockVisible() {
     // Primero, restaurar todos los stocks a su valor original
     $('.producto-card').each(function () {
         const productoId = $(this).data('producto-id');
-        const stockOriginalProducto = stockOriginal[productoId];
+        const stockOriginalProducto = stockOriginal[productoId] || 0;
         $(this).find('.stock-valor').text(stockOriginalProducto);
 
         // Habilitar el botón si hay stock
         const btnAgregar = $(this).find('.btn-agregar');
         btnAgregar.prop('disabled', false);
+        btnAgregar.html('<i class="fas fa-cart-plus"></i> Agregar al Carrito');
         $(this).find('.producto-stock').removeClass('stock-bajo');
     });
 
@@ -265,9 +486,9 @@ function actualizarStockVisible() {
     carritoItems.forEach(function (item) {
         const card = $(`.producto-card[data-producto-id="${item.ProductoId}"]`);
         if (card.length > 0) {
-            const stockOriginalProducto = stockOriginal[item.ProductoId];
+            const stockOriginalProducto = stockOriginal[item.ProductoId] || 0;
             const totalEnCarrito = calcularTotalEnCarrito(item.ProductoId);
-            const stockDisponible = stockOriginalProducto - totalEnCarrito;
+            const stockDisponible = Math.max(stockOriginalProducto - totalEnCarrito, 0);
 
             card.find('.stock-valor').text(stockDisponible);
 

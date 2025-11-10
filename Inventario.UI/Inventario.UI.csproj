@@ -186,8 +186,10 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CarritoApiController.cs" />
     <Compile Include="Controllers\CatalogoController.cs" />
+    <Compile Include="Controllers\ClientesApiController.cs" />
     <Compile Include="Controllers\ClientesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ProductosApiController.cs" />
     <Compile Include="Controllers\ProductosController.cs" />
     <Compile Include="Controllers\SeedController.cs" />
     <Compile Include="Global.asax.cs">
@@ -231,6 +233,8 @@
     <Content Include="Scripts\Catalogo\carrito.js" />
     <Content Include="Scripts\DataTable\dataTables.js" />
     <Content Include="Scripts\Inventario\ScriptDeInventario.js" />
+    <Content Include="Scripts\Inventario\clientes-admin.js" />
+    <Content Include="Scripts\Inventario\productos-admin.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
     <Content Include="Scripts\jquery-3.7.0.slim.js" />
