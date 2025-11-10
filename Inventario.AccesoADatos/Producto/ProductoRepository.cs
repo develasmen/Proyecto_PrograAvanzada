@@ -92,7 +92,8 @@ namespace Inventario.AccesoADatos.Producto
                 Marca = p.Marca,
                 Precio = p.Precio,
                 SKU = p.SKU,
-                CantidadEnStock = p.CantidadEnStock
+                CantidadEnStock = p.CantidadEnStock,
+                Estado = p.Estado
             }).ToList();
         }
     }

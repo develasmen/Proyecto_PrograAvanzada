@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contexto.cs" />
+    <Compile Include="Modelos\CarritoAd.cs" />
     <Compile Include="Modelos\ClienteAd.cs" />
     <Compile Include="Modelos\ProductoAd.cs" />
     <Compile Include="Cliente\ClienteRepository.cs" />
