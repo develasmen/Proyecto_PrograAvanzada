@@ -79,7 +79,6 @@
                         color: #4dabf7;
                     }
 
-            /* Sección de usuario en sidebar */
             .sidebar .user-section {
                 margin-top: auto;
                 width: 100%;
@@ -163,9 +162,19 @@
                     <li class="nav-item">
                         @Html.ActionLink("👥 Clientes", "ListarClientes", "Clientes", new { area = "" }, new { @class = "nav-link text-white" })
                     </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("✅ Gestión de Usuarios", "UsuariosPendientes", "Usuarios", new { area = "" }, new { @class = "nav-link text-white" })
+                    </li>
                 }
 
-                @if (User.IsInRole("Cliente"))
+                @if (User.IsInRole("Ventas"))
+                {
+                    <li class="nav-item">
+                        @Html.ActionLink("🛒 Catálogo", "Index", "Catalogo", new { area = "" }, new { @class = "nav-link text-white" })
+                    </li>
+                }
+
+                @if (User.IsInRole("Operaciones"))
                 {
                     <li class="nav-item">
                         @Html.ActionLink("🛒 Catálogo", "Index", "Catalogo", new { area = "" }, new { @class = "nav-link text-white" })
@@ -174,8 +183,6 @@
             </ul>
         </nav>
 
-        <!-- Sección de Usuario / Login -->
-        <!-- Sección de Usuario / Login -->
         <div class="user-section">
             @if (Request.IsAuthenticated)
             {

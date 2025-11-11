@@ -137,7 +137,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 @Html.LabelFor(m => m.NombreCompleto, new { @class = "form-label" })
-                                @Html.TextBoxFor(m => m.NombreCompleto, new { @class = "form-control", placeholder = "Ej: Juan Pérez" })
+                                @Html.TextBoxFor(m => m.NombreCompleto, new { @class = "form-control", placeholder = "Ej: Nombre Apellido" })
                                 @Html.ValidationMessageFor(m => m.NombreCompleto, "", new { @class = "text-danger" })
                             </div>
 
@@ -161,7 +161,7 @@
                             @Html.LabelFor(m => m.Direccion, new { @class = "form-label" })
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
-                                @Html.TextAreaFor(m => m.Direccion, new { @class = "form-control", rows = "2", placeholder = "Dirección completa" })
+                                @Html.TextAreaFor(m => m.Direccion, new { @class = "form-control", rows = "2", placeholder = "Direccion Completa" })
                             </div>
                             @Html.ValidationMessageFor(m => m.Direccion, "", new { @class = "text-danger" })
                         </div>
@@ -170,7 +170,7 @@
                             @Html.LabelFor(m => m.UserName, new { @class = "form-label" })
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", placeholder = "Nombre de usuario" })
+                                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", placeholder = "Username" })
                             </div>
                             @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
                         </div>

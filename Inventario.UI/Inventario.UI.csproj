@@ -192,6 +192,7 @@
     <Compile Include="Controllers\ProductosApiController.cs" />
     <Compile Include="Controllers\ProductosController.cs" />
     <Compile Include="Controllers\SeedController.cs" />
+    <Compile Include="Controllers\UsuariosController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -271,6 +272,9 @@
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Catalogo\Index.cshtml" />
+    <Content Include="Views\Usuarios\UsuariosPendientes.cshtml" />
+    <Content Include="Views\Usuarios\AprobarUsuario.cshtml" />
+    <Content Include="Views\Usuarios\UsuariosAprobados.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -16,5 +16,7 @@ namespace Inventario.UI.Identity
         public string Cedula { get; set; }
         public string Direccion { get; set; }
         public DateTime FechaRegistro { get; set; }
+
+        public string EstadoAprobacion { get; set; }  //Cambio para aprobacion del administrador
     }
 }

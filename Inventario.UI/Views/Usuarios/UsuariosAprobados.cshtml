@@ -1,0 +1,74 @@
+@model List<Inventario.UI.Identity.ApplicationUser>
+@{
+    ViewBag.Title = "Usuarios Aprobados";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+<div class="container mt-4">
+    <h2 class="mb-4">
+        <i class="fas fa-users text-success"></i> Usuarios Aprobados
+    </h2>
+
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No hay usuarios aprobados todavía.
+        </div>
+    }
+    else
+    {
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Nombre Completo</th>
+                                <th>Email</th>
+                                <th>Cédula</th>
+                                <th>Rol</th>
+                                <th>Fecha Registro</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var usuario in Model)
+                            {
+                                var roles = string.Join(", ", usuario.Roles.Select(r => r.RoleId));
+                                <tr>
+                                    <td><strong>@usuario.UserName</strong></td>
+                                    <td>@usuario.NombreCompleto</td>
+                                    <td>@usuario.Email</td>
+                                    <td>@usuario.Cedula</td>
+                                    <td>
+                                        @if (usuario.Roles.Any())
+                                        {
+                                            var roleManager = new Microsoft.AspNet.Identity.EntityFramework.RoleStore<Microsoft.AspNet.Identity.EntityFramework.IdentityRole>(new Inventario.UI.Identity.ApplicationDbContext());
+                                            var role = roleManager.FindByIdAsync(usuario.Roles.First().RoleId).Result;
+                                            <span class="badge bg-primary">@role.Name</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Sin rol</span>
+                                        }
+                                    </td>
+                                    <td>@usuario.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="mt-3">
+        <a href="@Url.Action("UsuariosPendientes")" class="btn btn-warning">
+            <i class="fas fa-user-clock"></i> Ver Usuarios Pendientes
+        </a>
+        <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary">
+            <i class="fas fa-home"></i> Volver al Inicio
+        </a>
+    </div>
+</div>

@@ -1,0 +1,119 @@
+@model Inventario.UI.Identity.ApplicationUser
+@{
+    ViewBag.Title = "Aprobar Usuario";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+<style>
+    .approve-container {
+        max-width: 600px;
+        margin: 80px auto;
+    }
+
+    .approve-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .approve-header {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+    }
+
+    .approve-body {
+        padding: 40px 30px;
+    }
+
+    .user-info {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .user-info-item {
+        margin-bottom: 10px;
+    }
+
+    .user-info-label {
+        font-weight: bold;
+        color: #6c757d;
+    }
+
+    .btn-approve {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 12px;
+        font-weight: bold;
+        width: 100%;
+    }
+
+        .btn-approve:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+</style>
+
+<div class="approve-container">
+    <div class="card approve-card">
+        <div class="approve-header">
+            <i class="fas fa-user-check fa-3x mb-3"></i>
+            <h2 class="mb-0">Aprobar Usuario</h2>
+        </div>
+        <div class="approve-body">
+            <div class="user-info">
+                <h5 class="mb-3"><i class="fas fa-info-circle"></i> Información del Usuario</h5>
+
+                <div class="user-info-item">
+                    <span class="user-info-label">Usuario:</span> @Model.UserName
+                </div>
+                <div class="user-info-item">
+                    <span class="user-info-label">Nombre Completo:</span> @Model.NombreCompleto
+                </div>
+                <div class="user-info-item">
+                    <span class="user-info-label">Email:</span> @Model.Email
+                </div>
+                <div class="user-info-item">
+                    <span class="user-info-label">Cédula:</span> @Model.Cedula
+                </div>
+                <div class="user-info-item">
+                    <span class="user-info-label">Dirección:</span> @Model.Direccion
+                </div>
+                <div class="user-info-item">
+                    <span class="user-info-label">Fecha de Registro:</span> @Model.FechaRegistro.ToString("dd/MM/yyyy HH:mm")
+                </div>
+            </div>
+
+            @using (Html.BeginForm("AprobarUsuario", "Usuarios", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("id", Model.Id)
+
+                <div class="form-group mb-4">
+                    <label class="form-label">
+                        <i class="fas fa-user-tag"></i> Seleccione el Rol para este Usuario
+                    </label>
+                    <select name="rolSeleccionado" class="form-select form-control" required>
+                        <option value="">-- Seleccione un rol --</option>
+                        <option value="Ventas">Ventas</option>
+                        <option value="Operaciones">Operaciones</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-approve">
+                    <i class="fas fa-check-circle me-2"></i>Aprobar Usuario
+                </button>
+
+                <a href="@Url.Action("UsuariosPendientes")" class="btn btn-outline-secondary mt-3 w-100">
+                    <i class="fas fa-arrow-left"></i> Cancelar
+                </a>
+            }
+        </div>
+    </div>
+</div>

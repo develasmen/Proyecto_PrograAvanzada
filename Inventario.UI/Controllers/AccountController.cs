@@ -47,6 +47,13 @@ namespace Inventario.UI.Controllers
             return View();
         }
 
+
+
+
+
+
+
+
         // POST: Account/Login
         [HttpPost]
         [AllowAnonymous]
@@ -58,6 +65,26 @@ namespace Inventario.UI.Controllers
                 return View(model);
             }
 
+            // Se verifica si el usuario existe
+            var user = await UserManager.FindByNameAsync(model.UserName);
+
+            if (user != null)
+            {
+                // aca validamos el estado del usuario
+                if (user.EstadoAprobacion == "Pendiente")
+                {
+                    ModelState.AddModelError("", "Tu cuenta sigue pendiente de aprobacion.");
+                    return View(model);
+                }
+
+                if (user.EstadoAprobacion == "Rechazado")
+                {
+                    ModelState.AddModelError("", "Tu cuenta ha sido rechazada. Contacte al administrador.");
+                    return View(model);
+                }
+            }
+
+            // una vez ya se aprobo continua normal 
             var result = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, shouldLockout: false);
 
             switch (result)
@@ -70,6 +97,17 @@ namespace Inventario.UI.Controllers
                     return View(model);
             }
         }
+
+
+
+
+
+
+
+
+
+
+
 
         // GET: Account/Register
         [AllowAnonymous]
@@ -94,17 +132,16 @@ namespace Inventario.UI.Controllers
                     Cedula = model.Cedula,
                     Direccion = model.Direccion,
                     FechaRegistro = DateTime.Now,
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    EstadoAprobacion = "Pendiente"  // Usuario queda pendiente de aprobacion
                 };
 
                 var result = await UserManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
-                    // Logica de cuando creamos un usuario, se asigna direcetamente a ser rol "Cliente"
-                    await UserManager.AddToRoleAsync(user.Id, "Cliente");
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                    return RedirectToAction("Index", "Home");
+                    TempData["SuccessMessage"] = "Registro exitoso. Tu cuenta está pendiente de aprobación por un administrador.";   //Ya no asignamos un rol Automaticamente
+                    return RedirectToAction("Login", "Account");
                 }
 
                 AddErrors(result);

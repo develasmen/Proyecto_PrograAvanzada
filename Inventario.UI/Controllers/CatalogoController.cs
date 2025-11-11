@@ -6,7 +6,8 @@ using System.Web.Mvc;
 
 namespace Inventario.UI.Controllers
 {
-    [Authorize(Roles = "Cliente")]
+    [Authorize(Roles = "Ventas,Operaciones")] //Cambiamos esto a 2 roles, ya NO se usa "Clientes"
+                                              //Vamos a dejar Operaciones ya que no tenemos ninguna vista para esos 
     public class CatalogoController : Controller
     {
         private readonly ProductoLN _productoLN;
