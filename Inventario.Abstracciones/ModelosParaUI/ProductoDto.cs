@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Web;
 
 namespace Inventario.Abstracciones.ModelosParaUI
 {
@@ -35,5 +36,8 @@ namespace Inventario.Abstracciones.ModelosParaUI
         public int CantidadEnStock { get; set; }
 
         public bool Estado { get; set; }
+
+        // Propiedad agregada para el manejo de archivos
+        public HttpPostedFileBase archivo { get; set; }
     }
 }

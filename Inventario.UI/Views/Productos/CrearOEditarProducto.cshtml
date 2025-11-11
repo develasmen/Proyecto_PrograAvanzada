@@ -1,5 +1,4 @@
 ﻿@model Inventario.Abstracciones.ModelosParaUI.ProductoDto
-
 @{
     ViewBag.Title = Model.Id == 0 ? "Crear Nuevo Producto" : "Editar Producto";
 }
@@ -9,7 +8,7 @@
         <div class="col-md-8">
             <h2 class="mb-4">@ViewBag.Title</h2>
 
-            @using (Html.BeginForm())
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
                 @Html.AntiForgeryToken()
 
@@ -40,7 +39,7 @@
                             @Html.LabelFor(model => model.SKU, new { @class = "form-label" })
                             @Html.EditorFor(model => model.SKU, new { htmlAttributes = new { @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.SKU, "", new { @class = "text-danger" })
-                        </div>
+                        </div>  
 
                         <div class="col-md-6 mb-3">
                             @Html.LabelFor(model => model.Precio, new { @class = "form-label" })
@@ -60,6 +59,21 @@
                                 @Html.LabelFor(model => model.Estado, "Activo", new { @class = "form-check-label" })
                             </div>
                         </div>
+
+                        <hr class="my-4" />
+
+                        @* Sección de Imagen *@
+                        <div class="col-12 mb-3">
+                            <label class="form-label d-block">Imagen actual</label>
+                            <img id="previewImg" src="@Url.Action("ImagenDeProductoPorSKU", "Productos", new { sku = Model.SKU })" alt="Imagen del producto" style="max-width: 240px; height: auto; border:1px solid #ddd; padding:4px; border-radius:4px;" />
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label for="archivo" class="form-label">Subir/Cambiar imagen</label>
+                            <input type="file" id="archivo" name="archivo" class="form-control" accept="image/*" />
+                        </div>
+                        @* Fin Sección de Imagen *@
+
                     </div>
 
                     <div class="d-grid gap-2 mt-4">
@@ -77,4 +91,19 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        (function () {
+            var input = document.getElementById('archivo');
+            var img = document.getElementById('previewImg');
+            if (input && img) {
+                input.addEventListener('change', function (evt) {
+                    const file = evt.target.files && evt.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = function (e) { img.src = e.target.result; };
+                    reader.readAsDataURL(file);
+                });
+            }
+        })();
+    </script>
 }
