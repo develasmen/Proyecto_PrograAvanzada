@@ -25,9 +25,15 @@ namespace Inventario.UI.Controllers
                 roleManager.Create(role);
             }
 
-            if (!roleManager.RoleExists("Cliente"))
+            if (!roleManager.RoleExists("Ventas"))
             {
-                var role = new IdentityRole("Cliente");
+                var role = new IdentityRole("Ventas");
+                roleManager.Create(role);
+            }
+
+            if (!roleManager.RoleExists("Operaciones"))
+            {
+                var role = new IdentityRole("Operaciones");
                 roleManager.Create(role);
             }
 
@@ -43,7 +49,8 @@ namespace Inventario.UI.Controllers
                     Cedula = "000000000",
                     Direccion = "Oficina Principal",
                     FechaRegistro = DateTime.Now,
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    EstadoAprobacion = "Aprobado"
                 };
 
                 string password = "Admin123"; 
@@ -55,8 +62,8 @@ namespace Inventario.UI.Controllers
                 }
             }
 
-            return Content("Prueba de Registro"); //Esta vista posibilemente la eliminemos para el ultimo avance,
-                                                  //toda esta info ya esta en la bd entonces si no me equivoco podriamos eliminarla
+            return Content("Roles: Administrador, Ventas, Operaciones creados. Usuario admin creado."); //Esta vista posibilemente la eliminemos para el ultimo avance,
+                                                                                                        //toda esta info ya esta en la bd entonces si no me equivoco podriamos eliminarla
         }
     }
 }
