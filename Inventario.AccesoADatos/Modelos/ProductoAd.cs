@@ -17,6 +17,9 @@ namespace Inventario.AccesoADatos.Modelos
         public string Marca { get; set; }
         [Required]
         public decimal Precio { get; set; }
+
+        public decimal PorcentajeIVA { get; set; }
+
         [Required, StringLength(50)]
         public string SKU { get; set; }
         [Required]

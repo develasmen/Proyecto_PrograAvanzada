@@ -85,7 +85,12 @@
 
     function crearFilaProducto(producto) {
         const precio = Number(producto.Precio) || 0;
+        const iva = Number(producto.PorcentajeIVA) || 0;
+        const precioConIva = producto.PrecioConImpuestos
+            ? Number(producto.PrecioConImpuestos)
+            : precio + (precio * (iva / 100));
         const precioFormateado = formatoMoneda ? formatoMoneda.format(precio) : '\u20a1' + precio.toFixed(2);
+        const precioIvaFormateado = formatoMoneda ? formatoMoneda.format(precioConIva) : '\u20a1' + precioConIva.toFixed(2);
 
         return `
             <tr>
@@ -93,6 +98,8 @@
                 <td>${escaparHtml(producto.Nombre)}</td>
                 <td>${escaparHtml(producto.Marca)}</td>
                 <td>${precioFormateado}</td>
+                <td>${iva.toFixed(2)}%</td>
+                <td>${precioIvaFormateado}</td>
                 <td class="text-center">${producto.CantidadEnStock || 0}</td>
                 <td class="text-center action-icons">
                     <a href="/Productos/EditarProducto/${producto.Id}" class="text-warning" title="Editar">

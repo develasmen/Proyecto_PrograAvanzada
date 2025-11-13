@@ -191,6 +191,8 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProductosApiController.cs" />
     <Compile Include="Controllers\ProductosController.cs" />
+    <Compile Include="Controllers\ErroresController.cs" />
+    <Compile Include="Controllers\CuponesController.cs" />
     <Compile Include="Controllers\SeedController.cs" />
     <Compile Include="Controllers\UsuariosController.cs" />
     <Compile Include="Global.asax.cs">
@@ -265,6 +267,11 @@
     <Content Include="Views\Productos\DetallesProducto.cshtml" />
     <Content Include="Views\Productos\CrearOEditarProducto.cshtml" />
     <Content Include="Views\Productos\EliminarProducto.cshtml" />
+    <Content Include="Views\Cupones\Index.cshtml" />
+    <Content Include="Views\Cupones\CrearOEditar.cshtml" />
+    <Content Include="Views\Cupones\Eliminar.cshtml" />
+    <Content Include="Views\Errores\Http400.cshtml" />
+    <Content Include="Views\Errores\Http500.cshtml" />
     <Content Include="Views\Clientes\CrearOEditarCliente.cshtml" />
     <Content Include="Views\Clientes\ListarClientes.cshtml" />
     <Content Include="Views\Clientes\DetallesCliente.cshtml" />

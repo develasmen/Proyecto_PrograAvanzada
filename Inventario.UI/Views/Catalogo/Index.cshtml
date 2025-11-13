@@ -440,7 +440,14 @@
                         <div class="producto-info">
                             <h3>@producto.Nombre</h3>
                             <div class="producto-marca">@producto.Marca</div>
-                            <div class="producto-precio">&#8353;@producto.Precio.ToString("N2")</div>
+                            <div class="producto-precio">
+                                <span class="text-muted d-block small">Precio base</span>
+                                <strong>&#8353;@producto.Precio.ToString("N2")</strong>
+                            </div>
+                            <div class="producto-precio mt-1 d-flex justify-content-between align-items-center">
+                                <span class="badge bg-secondary">@producto.PorcentajeIVA.ToString("0.##")% IVA</span>
+                                <div class="fw-bold fs-5 text-primary">&#8353;@producto.PrecioConImpuestos.ToString("N2")</div>
+                            </div>
                             <div class="producto-stock @(producto.CantidadEnStock < 10 ? "stock-bajo" : string.Empty)">
                                 Stock: <span class="stock-valor">@producto.CantidadEnStock</span> unidades
                             </div>
@@ -477,9 +484,29 @@
                     <span>Total de items:</span>
                     <span id="total-items">0</span>
                 </div>
+                <div class="resumen-linea d-flex justify-content-between">
+                    <span>Subtotal:</span>
+                    <span id="subtotal-precio">&#8353;0.00</span>
+                </div>
+                <div class="resumen-linea d-flex justify-content-between">
+                    <span>IVA:</span>
+                    <span id="iva-precio">&#8353;0.00</span>
+                </div>
+                <div class="resumen-linea d-flex justify-content-between text-success">
+                    <span>Descuentos:</span>
+                    <span id="descuento-precio">-&#8353;0.00</span>
+                </div>
                 <div class="resumen-linea resumen-total d-flex justify-content-between">
                     <span>TOTAL:</span>
                     <span id="total-precio">&#8353;0.00</span>
+                </div>
+                <div class="mt-3">
+                    <label class="form-label small text-uppercase text-muted">Aplicar cupón</label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" id="input-cupon-global" placeholder="CODIGO" maxlength="50" autocomplete="off" />
+                        <button class="btn btn-outline-primary" type="button" onclick="aplicarCuponDesdeResumen()">Aplicar</button>
+                    </div>
+                    <small class="text-muted d-block mt-1">Se aplicará al primer producto compatible del carrito.</small>
                 </div>
                 <button class="btn-finalizar" id="btn-finalizar" disabled onclick="finalizarCompra()">
                     <i class="fas fa-check-circle me-2"></i> Finalizar Compra

@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Carrito\CarritoLN.cs" />
+    <Compile Include="Cupon\CuponDescuentoLN.cs" />
     <Compile Include="General\Fecha.cs" />
     <Compile Include="Cliente\ClienteLN.cs" />
     <Compile Include="Producto\ProductoLN.cs" />

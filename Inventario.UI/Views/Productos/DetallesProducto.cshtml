@@ -29,6 +29,12 @@
                         <dt class="col-sm-4 text-muted pt-2">@Html.DisplayNameFor(model => model.Precio)</dt>
                         <dd class="col-sm-8 border-bottom pb-2 pt-2">@Html.DisplayFor(model => model.Precio)</dd>
 
+                        <dt class="col-sm-4 text-muted pt-2">@Html.DisplayNameFor(model => model.PorcentajeIVA)</dt>
+                        <dd class="col-sm-8 border-bottom pb-2 pt-2">@Model.PorcentajeIVA.ToString("0.##") %</dd>
+
+                        <dt class="col-sm-4 text-muted pt-2">@Html.DisplayNameFor(model => model.PrecioConImpuestos)</dt>
+                        <dd class="col-sm-8 border-bottom pb-2 pt-2">@Model.PrecioConImpuestos.ToString("C2")</dd>
+
                         <dt class="col-sm-4 text-muted pt-2">@Html.DisplayNameFor(model => model.CantidadEnStock)</dt>
                         <dd class="col-sm-8 border-bottom pb-2 pt-2"><span class="badge bg-info text-dark">@Html.DisplayFor(model => model.CantidadEnStock) unidades</span></dd>
 

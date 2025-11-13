@@ -1,141 +1,117 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Mi aplicación ASP.NET</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - Pedidos360</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-    <link href="~/Content/DataTable/dataTables.dataTables.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link href="~/Content/DataTable/dataTables.dataTables.css" rel="stylesheet" />
     <style>
         html, body {
             height: 100%;
             margin: 0;
-            overflow: hidden;
         }
 
         body {
             display: flex;
             min-height: 100vh;
             background-color: #f8f9fa;
+            font-family: "Segoe UI", sans-serif;
         }
 
         .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 230px;
-            height: 100%;
+            width: 240px;
             background-color: #0d1b2a;
-            color: white;
+            color: #fff;
             display: flex;
             flex-direction: column;
-            align-items: start;
             padding: 1rem;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.2);
         }
 
-            .sidebar a {
-                color: white;
-                text-decoration: none;
-                margin: 0.5rem 0;
-                display: block;
-                width: 100%;
-                padding: 0.5rem 0.8rem;
-                border-radius: 8px;
-                transition: background-color 0.3s ease, padding-left 0.2s ease;
-            }
+        .sidebar .brand {
+            text-align: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            margin-bottom: 1rem;
+        }
 
-                .sidebar a:hover {
-                    background-color: #1b263b;
-                    padding-left: 1.1rem;
-                }
+        .sidebar .brand a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-            .sidebar h4 {
-                width: 100%;
-                margin-bottom: 1rem;
-                text-align: center;
-                padding-bottom: 0.5rem;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            }
+        .sidebar nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
-                .sidebar h4 a {
-                    display: inline-block;
-                    max-width: 100%;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    color: white;
-                    font-weight: bold;
-                    letter-spacing: 1px;
-                    text-decoration: none;
-                    font-size: 1.2rem;
-                }
+        .sidebar nav li {
+            margin-bottom: 0.3rem;
+        }
 
-                    .sidebar h4 a span {
-                        color: #4dabf7;
-                    }
+        .sidebar nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 10px;
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
 
-            .sidebar .user-section {
-                margin-top: auto;
-                width: 100%;
-                padding-top: 1rem;
-                border-top: 1px solid rgba(255, 255, 255, 0.2);
-            }
+        .sidebar nav a:hover {
+            background-color: #1b263b;
+            padding-left: 1rem;
+        }
 
-                .sidebar .user-section .user-info {
-                    display: flex;
-                    align-items: center;
-                    padding: 0.5rem;
-                    background-color: rgba(255, 255, 255, 0.1);
-                    border-radius: 8px;
-                    margin-bottom: 0.5rem;
-                }
+        .sidebar .user-section {
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding-top: 1rem;
+        }
 
-                    .sidebar .user-section .user-info i {
-                        font-size: 1.5rem;
-                        margin-right: 0.5rem;
-                    }
+        .sidebar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.6rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 0.8rem;
+        }
 
-                    .sidebar .user-section .user-info span {
-                        font-size: 0.9rem;
-                        font-weight: 500;
-                    }
+        .sidebar .btn-logout {
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem;
+            background-color: #d9534f;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
 
-                .sidebar .user-section .btn-logout {
-                    width: 100%;
-                    padding: 0.5rem;
-                    background-color: #dc3545;
-                    color: white;
-                    border: none;
-                    border-radius: 8px;
-                    cursor: pointer;
-                    transition: background-color 0.3s ease;
-                }
-
-                    .sidebar .user-section .btn-logout:hover {
-                        background-color: #c82333;
-                    }
-
-                .sidebar .user-section .auth-links a {
-                    text-align: center;
-                    background-color: rgba(77, 171, 247, 0.2);
-                    margin: 0.3rem 0;
-                }
-
-                    .sidebar .user-section .auth-links a:hover {
-                        background-color: rgba(77, 171, 247, 0.4);
-                    }
+        .sidebar .btn-logout:hover {
+            background-color: #c9302c;
+        }
 
         .content {
-            flex-grow: 1;
-            margin-left: 220px;
+            flex: 1;
+            margin-left: 240px;
             padding: 2rem;
-            height: 100vh;
-            overflow-y: auto;
         }
 
         footer {
@@ -147,71 +123,82 @@
 </head>
 <body>
     <div class="sidebar">
-        <h4>
-            <a href="@Url.Action("Index", "Home")" class="navbar-brand text-white">
-                ✨ PEDIDOS<span>360</span>
+        <div class="brand">
+            <a href="@Url.Action("Index", "Home")">
+                <i class="fas fa-cubes"></i>
+                <span>PEDIDOS360</span>
             </a>
-        </h4>
-        <nav class="mt-3 w-100">
-            <ul class="nav flex-column w-100">
+        </div>
+        <nav>
+            <ul class="nav flex-column">
                 @if (User.IsInRole("Administrador"))
                 {
-                    <li class="nav-item">
-                        @Html.ActionLink("📦 Productos", "ListarProductos", "Productos", new { area = "" }, new { @class = "nav-link text-white" })
+                    <li>
+                        <a href="@Url.Action("ListarProductos", "Productos")">
+                            <i class="fas fa-boxes-stacked"></i>
+                            <span>Productos</span>
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        @Html.ActionLink("👥 Clientes", "ListarClientes", "Clientes", new { area = "" }, new { @class = "nav-link text-white" })
+                    <li>
+                        <a href="@Url.Action("ListarClientes", "Clientes")">
+                            <i class="fas fa-handshake"></i>
+                            <span>Clientes</span>
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        @Html.ActionLink("✅ Gestión de Usuarios", "UsuariosPendientes", "Usuarios", new { area = "" }, new { @class = "nav-link text-white" })
+                    <li>
+                        <a href="@Url.Action("UsuariosPendientes", "Usuarios")">
+                            <i class="fas fa-users-gear"></i>
+                            <span>Gestion de Usuarios</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "Cupones")">
+                            <i class="fas fa-ticket-alt"></i>
+                            <span>Cupones</span>
+                        </a>
                     </li>
                 }
-
-                @if (User.IsInRole("Ventas"))
+                @if (!User.IsInRole("Administrador") && (User.IsInRole("Ventas") || User.IsInRole("Operaciones")))
                 {
-                    <li class="nav-item">
-                        @Html.ActionLink("🛒 Catálogo", "Index", "Catalogo", new { area = "" }, new { @class = "nav-link text-white" })
-                    </li>
-                }
-
-                @if (User.IsInRole("Operaciones"))
-                {
-                    <li class="nav-item">
-                        @Html.ActionLink("🛒 Catálogo", "Index", "Catalogo", new { area = "" }, new { @class = "nav-link text-white" })
+                    <li>
+                        <a href="@Url.Action("Index", "Catalogo")">
+                            <i class="fas fa-store"></i>
+                            <span>Catalogo</span>
+                        </a>
                     </li>
                 }
             </ul>
         </nav>
-
         <div class="user-section">
             @if (Request.IsAuthenticated)
             {
                 <div class="user-info">
-                    <i class="fas fa-user-circle"></i>
-                    <span>@User.Identity.Name</span>
+                    <i class="fas fa-user-circle fa-lg"></i>
+                    <div>
+                        <div class="fw-semibold">@User.Identity.Name</div>
+                        <small class="text-uppercase text-muted">En linea</small>
+                    </div>
                 </div>
-
-                <form action="@Url.Action("LogOff", "Account")" method="post" id="logoutForm">
+                <form action="@Url.Action("LogOff", "Account")" method="post">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="btn-logout">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        <i class="fas fa-sign-out-alt me-2"></i>Salir
                     </button>
                 </form>
             }
             else
             {
-                <div class="auth-links">
-                    <a href="@Url.Action("Login", "Account")">
-                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                <div class="d-grid gap-2">
+                    <a class="btn btn-outline-light" href="@Url.Action("Login", "Account")">
+                        <i class="fas fa-sign-in-alt me-2"></i>Ingresar
                     </a>
-                    <a href="@Url.Action("Register", "Account")">
-                        <i class="fas fa-user-plus"></i> Registrarse
+                    <a class="btn btn-outline-light" href="@Url.Action("Register", "Account")">
+                        <i class="fas fa-user-plus me-2"></i>Registrarse
                     </a>
                 </div>
             }
         </div>
     </div>
-
     <div class="content">
         @RenderBody()
         <hr />

@@ -47,8 +47,10 @@
     <Compile Include="LogicaDeNegocio\General\IFecha.cs" />
     <Compile Include="LogicaDeNegocio\Cliente\IClienteLN.cs" />
     <Compile Include="LogicaDeNegocio\Inventario\IProductoLN.cs" />
+    <Compile Include="LogicaDeNegocio\Cupon\ICuponDescuentoLN.cs" />
     <Compile Include="ModelosParaUI\CarritoDto.cs" />
     <Compile Include="ModelosParaUI\ClienteDto.cs" />
+    <Compile Include="ModelosParaUI\CuponDescuentoDto.cs" />
     <Compile Include="ModelosParaUI\ProductoDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
