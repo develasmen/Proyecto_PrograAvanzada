@@ -158,34 +158,13 @@ namespace Inventario.LogicaDeNegocio.Carrito
             return true;
         }
 
+        /// Método actualizado para incluir el manejo de Pedidos: Ahora delega toda la lógica a PedidoLN
         public async Task<bool> FinalizarCompra(string usuarioId)
         {
-            var itemsCarrito = await _contexto.Carritos
-                .Include(c => c.Producto)
-                .Where(c => c.UsuarioId == usuarioId)
-                .ToListAsync();
-
-            if (!itemsCarrito.Any())
-                throw new Exception("El carrito está vacío");
-
-            foreach (var item in itemsCarrito)
-            {
-                var producto = item.Producto;
-
-                if (producto.CantidadEnStock < item.Cantidad)
-                {
-                    throw new Exception($"Stock insuficiente para {producto.Nombre}. Disponible: {producto.CantidadEnStock}");
-                }
-
-                producto.CantidadEnStock -= item.Cantidad;
-                producto.FechaDeModificacion = DateTime.Now;
-            }
-
-            _contexto.Carritos.RemoveRange(itemsCarrito);
-
-            await _contexto.SaveChangesAsync();
-
-            return true;
+            // Delegar TODA la lógica de creación de pedido a PedidoLN
+            var pedidoLN = new Inventario.LogicaDeNegocio.Pedido.PedidoLN();
+            int pedidoId = await pedidoLN.CrearPedidoDesdeCarrito(usuarioId);
+            return pedidoId > 0;
         }
 
         public async Task<CarritoDto> AplicarCupon(string usuarioId, AplicarCuponRequest request)
@@ -337,4 +316,3 @@ namespace Inventario.LogicaDeNegocio.Carrito
         }
     }
 }
-

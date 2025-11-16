@@ -57,8 +57,11 @@
     <Compile Include="Modelos\CarritoAd.cs" />
     <Compile Include="Modelos\ClienteAd.cs" />
     <Compile Include="Modelos\CuponDescuentoAD.cs" />
+    <Compile Include="Modelos\PedidoAD.cs" />
+    <Compile Include="Modelos\PedidoDetalleAD.cs" />
     <Compile Include="Modelos\ProductoAd.cs" />
     <Compile Include="Cliente\ClienteRepository.cs" />
+    <Compile Include="Pedido\PedidoRepository.cs" />
     <Compile Include="Producto\ProductoRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

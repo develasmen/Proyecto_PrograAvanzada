@@ -157,6 +157,9 @@
                             <span>Cupones</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("🛒 Pedidos", "Index", "Pedidos", new { area = "" }, new { @class = "nav-link text-white" })
+                    </li>
                 }
                 @if (!User.IsInRole("Administrador") && (User.IsInRole("Ventas") || User.IsInRole("Operaciones")))
                 {
@@ -165,6 +168,9 @@
                             <i class="fas fa-store"></i>
                             <span>Catalogo</span>
                         </a>
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("📋 Mis Pedidos", "MisPedidos", "Pedidos", new { area = "" }, new { @class = "nav-link text-white" })
                     </li>
                 }
             </ul>

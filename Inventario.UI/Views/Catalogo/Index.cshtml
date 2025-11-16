@@ -137,22 +137,48 @@
         transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
 
-        .producto-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 25px 55px rgba(15, 23, 42, 0.18);
-        }
+    .producto-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 25px 55px rgba(15, 23, 42, 0.18);
+    }
 
     .producto-imagen {
         width: 100%;
         height: 170px;
         border-radius: 14px;
         background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+        margin-bottom: 1rem;
+        overflow: hidden;
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #fff;
+    }
+
+    .producto-imagen img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 14px;
+        z-index: 2;
+    }
+
+    .producto-imagen .icono-fallback {
         font-size: 2.4rem;
-        margin-bottom: 1rem;
+        color: #fff;
+        z-index: 1;
+    }
+
+    .producto-imagen.sin-imagen .icono-fallback {
+        display: flex !important;
+    }
+
+    .producto-imagen:not(.sin-imagen) .icono-fallback {
+        display: none;
     }
 
     .producto-info h3 {
@@ -435,8 +461,16 @@
                 {
                     <div class="producto-card" data-producto-id="@producto.Id">
                         <div class="producto-imagen">
-                            <i class="fas fa-box"></i>
+                            <div class="producto-imagen">
+                                <img src="@Url.Action("ImagenDeProductoPorSKU", "Productos", new { sku = producto.SKU })"
+                                     alt="@producto.Nombre"
+                                     onload="this.style.opacity='1';"
+                                     onerror="this.style.display='none'; this.parentElement.classList.add('sin-imagen');"
+                                     style="opacity: 0; transition: opacity 0.3s;" />
+                                <i class="fas fa-box icono-fallback"></i>
+                            </div>
                         </div>
+
                         <div class="producto-info">
                             <h3>@producto.Nombre</h3>
                             <div class="producto-marca">@producto.Marca</div>

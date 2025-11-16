@@ -16,5 +16,8 @@ namespace Inventario.AccesoADatos
 
         public DbSet<CarritoAD> Carritos { get; set; }
         public DbSet<CuponDescuentoAD> CuponesDescuento { get; set; }
+
+        public DbSet<PedidoAD> Pedidos { get; set; }
+        public DbSet<PedidoDetalleAD> PedidoDetalles { get; set; }
     }
 }

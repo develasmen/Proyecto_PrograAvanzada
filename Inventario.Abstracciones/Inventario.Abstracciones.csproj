@@ -51,6 +51,7 @@
     <Compile Include="ModelosParaUI\CarritoDto.cs" />
     <Compile Include="ModelosParaUI\ClienteDto.cs" />
     <Compile Include="ModelosParaUI\CuponDescuentoDto.cs" />
+    <Compile Include="ModelosParaUI\PedidoDTO.cs" />
     <Compile Include="ModelosParaUI\ProductoDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

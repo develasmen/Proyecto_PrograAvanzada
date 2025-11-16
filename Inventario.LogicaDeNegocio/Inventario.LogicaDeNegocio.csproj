@@ -56,6 +56,7 @@
     <Compile Include="Cupon\CuponDescuentoLN.cs" />
     <Compile Include="General\Fecha.cs" />
     <Compile Include="Cliente\ClienteLN.cs" />
+    <Compile Include="Pedido\PedidoLN.cs" />
     <Compile Include="Producto\ProductoLN.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -73,6 +74,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
