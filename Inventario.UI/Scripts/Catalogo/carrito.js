@@ -1,6 +1,6 @@
 ﻿/**
  * Sistema de Carrito de Compras con AJAX
- * Maneja todas las operaciones del carrito y actualización de stock en tiempo real
+ * Maneja todas las operaciones del carrito y actualizacion de stock en tiempo real
  */
 
 // Estado global del carrito
@@ -12,7 +12,12 @@ const formateadorMoneda = window.Intl
     ? new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' })
     : null;
 
-// Inicialización cuando el documento está listo
+function formatearMoneda(valor) {
+    const numero = Number(valor) || 0;
+    return formateadorMoneda ? formateadorMoneda.format(numero) : '\u20a1' + numero.toFixed(2);
+}
+
+// Inicializacion cuando el documento esta listo
 $(document).ready(function () {
     inicializarCarrito();
     inicializarBusquedaCatalogo();
@@ -340,12 +345,12 @@ function actualizarCantidad(carritoId, nuevaCantidad, productoId) {
 function eliminarDelCarrito(carritoId) {
     Swal.fire({
         title: '¿Eliminar producto?',
-        text: "Se eliminará este producto del carrito",
+        text: "Se eliminara este producto del carrito",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#e74c3c',
         cancelButtonColor: '#95a5a6',
-        confirmButtonText: 'Sí, eliminar',
+        confirmButtonText: 'Si, eliminar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -368,12 +373,12 @@ function eliminarDelCarrito(carritoId) {
 function vaciarCarrito() {
     Swal.fire({
         title: '¿Vaciar carrito?',
-        text: "Se eliminarán todos los productos del carrito",
+        text: "Se eliminaran todos los productos del carrito",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#e74c3c',
         cancelButtonColor: '#95a5a6',
-        confirmButtonText: 'Sí, vaciar',
+        confirmButtonText: 'Si, vaciar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -405,11 +410,17 @@ function renderizarCarrito() {
     let html = '';
     carritoItems.forEach(function (item) {
         const maxCantidad = calcularMaxCantidadPermitida(item.ProductoId, item.Id);
+        const cuponHtml = item.CodigoCupon
+            ? `<span class="badge bg-success me-2">Cupon ${escaparHtml(item.CodigoCupon)}</span>
+               <button class="btn btn-link text-danger p-0" onclick="removerCupon(${item.Id})">Quitar cupon</button>`
+            : `<button class="btn btn-link p-0" onclick="mostrarModalCupon(${item.Id})">
+                    <i class="fas fa-ticket-alt me-1"></i>Aplicar cupon
+               </button>`;
 
         html += `
             <div class="carrito-item">
                 <div class="carrito-item-header">
-                    <div class="carrito-item-nombre">${item.NombreProducto}</div>
+                    <div class="carrito-item-nombre">${escaparHtml(item.NombreProducto)}</div>
                     <button class="btn-eliminar" onclick="eliminarDelCarrito(${item.Id})">
                         <i class="fas fa-times"></i>
                     </button>
@@ -417,16 +428,22 @@ function renderizarCarrito() {
                 <div class="carrito-item-controls">
                     <div class="cantidad-control">
                         <button class="btn-cantidad" onclick="actualizarCantidad(${item.Id}, ${item.Cantidad - 1}, ${item.ProductoId})">-</button>
-                        <input type="number" class="cantidad-input" value="${item.Cantidad}" 
+                        <input type="number" class="cantidad-input" value="${item.Cantidad}"
                                data-carrito-id="${item.Id}"
                                onchange="actualizarCantidad(${item.Id}, parseInt(this.value), ${item.ProductoId})"
                                min="1" max="${maxCantidad}">
-                        <button class="btn-cantidad" onclick="actualizarCantidad(${item.Id}, ${item.Cantidad + 1}, ${item.ProductoId})" 
+                        <button class="btn-cantidad" onclick="actualizarCantidad(${item.Id}, ${item.Cantidad + 1}, ${item.ProductoId})"
                                 ${item.Cantidad >= maxCantidad ? 'disabled' : ''}>+</button>
                     </div>
                 </div>
                 <div class="carrito-item-precio">
-                    ₡${item.PrecioUnitario.toFixed(2)} x ${item.Cantidad} = ₡${item.Subtotal.toFixed(2)}
+                    <div class="small text-muted">${formatearMoneda(item.PrecioUnitario)} x ${item.Cantidad} = ${formatearMoneda(item.Subtotal)}</div>
+                    <div class="small text-muted">IVA (${item.PorcentajeIVA.toFixed(2)}%): ${formatearMoneda(item.MontoIVA)}</div>
+                    <div class="small ${item.MontoDescuento > 0 ? 'text-success' : 'text-muted'}">Descuento: -${formatearMoneda(item.MontoDescuento)}</div>
+                    <div class="fw-bold fs-5 mt-1">Total: ${formatearMoneda(item.TotalLinea)}</div>
+                </div>
+                <div class="mt-2">
+                    ${cuponHtml}
                 </div>
             </div>
         `;
@@ -436,12 +453,12 @@ function renderizarCarrito() {
     $('#btn-vaciar').show();
 }
 
-//Mostrar el carrito vacío
+//Mostrar el carrito vacio
 function mostrarCarritoVacio() {
     $('#carrito-items').html(`
         <div class="carrito-vacio">
             <i class="fas fa-shopping-cart"></i>
-            <p>Tu carrito está vacío</p>
+            <p>Tu carrito esta vacio</p>
         </div>
     `);
     $('#btn-vaciar').hide();
@@ -456,7 +473,10 @@ function actualizarResumen() {
             $('#carrito-badge').text(data.TotalItems);
             $('#total-productos').text(data.TotalProductos);
             $('#total-items').text(data.TotalItems);
-            $('#total-precio').text('₡' + data.Total.toFixed(2));
+            $('#subtotal-precio').text(formatearMoneda(data.Subtotal));
+            $('#iva-precio').text(formatearMoneda(data.TotalIVA));
+            $('#descuento-precio').text('-' + formatearMoneda(data.TotalDescuentos));
+            $('#total-precio').text(formatearMoneda(data.Total));
 
             if (data.TotalProductos > 0) {
                 $('#btn-finalizar').prop('disabled', false);
@@ -475,14 +495,14 @@ function actualizarStockVisible() {
         const stockOriginalProducto = stockOriginal[productoId] || 0;
         $(this).find('.stock-valor').text(stockOriginalProducto);
 
-        // Habilitar el botón si hay stock
+        // Habilitar el boton si hay stock
         const btnAgregar = $(this).find('.btn-agregar');
         btnAgregar.prop('disabled', false);
         btnAgregar.html('<i class="fas fa-cart-plus"></i> Agregar al Carrito');
         $(this).find('.producto-stock').removeClass('stock-bajo');
     });
 
-    // Calcular y mostrar el stock disponible restando lo que está en el carrito
+    // Calcular y mostrar el stock disponible restando lo que esta en el carrito
     carritoItems.forEach(function (item) {
         const card = $(`.producto-card[data-producto-id="${item.ProductoId}"]`);
         if (card.length > 0) {
@@ -492,7 +512,7 @@ function actualizarStockVisible() {
 
             card.find('.stock-valor').text(stockDisponible);
 
-            // Deshabilitar botón si no hay stock disponible
+            // Deshabilitar boton si no hay stock disponible
             const btnAgregar = card.find('.btn-agregar');
             if (stockDisponible <= 0) {
                 btnAgregar.prop('disabled', true);
@@ -522,7 +542,7 @@ function calcularTotalEnCarrito(productoId) {
 }
 
 
-    //Calcular total en carrito excepto un item específico
+    //Calcular total en carrito excepto un item especifico
 
 function calcularTotalEnCarritoExceptoItem(productoId, carritoIdExcluir) {
     return carritoItems
@@ -530,7 +550,7 @@ function calcularTotalEnCarritoExceptoItem(productoId, carritoIdExcluir) {
         .reduce((total, item) => total + item.Cantidad, 0);
 }
 
-//Calcular la cantidad máxima permitida para un item del carrito
+//Calcular la cantidad maxima permitida para un item del carrito
 function calcularMaxCantidadPermitida(productoId, carritoId) {
     const stockOriginalProducto = stockOriginal[productoId];
     const totalOtrosItems = calcularTotalEnCarritoExceptoItem(productoId, carritoId);
@@ -542,12 +562,12 @@ function calcularMaxCantidadPermitida(productoId, carritoId) {
 function finalizarCompra() {
     Swal.fire({
         title: '¿Finalizar compra?',
-        text: "Se procesará tu pedido y se descontará del inventario",
+        text: "Se procesara tu pedido y se descontara del inventario",
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#27ae60',
         cancelButtonColor: '#95a5a6',
-        confirmButtonText: 'Sí, finalizar',
+        confirmButtonText: 'Si, finalizar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -592,7 +612,7 @@ function finalizarCompra() {
     });
 }
 
-//Mostrar mensaje de éxito
+//Mostrar mensaje de exito
 function mostrarExito(titulo, texto, timer = 1500) {
     Swal.fire({
         icon: 'success',
@@ -612,3 +632,101 @@ function mostrarError(mensaje) {
         text: mensaje
     });
 }
+
+
+function mostrarModalCupon(carritoId) {
+    const item = carritoItems.find(i => i.Id === carritoId);
+    if (!item) {
+        mostrarError('No se encontro el producto en el carrito');
+        return;
+    }
+
+    Swal.fire({
+        title: `Cupon para ${item.NombreProducto}`,
+        input: 'text',
+        inputLabel: 'Ingresa el codigo del cupon',
+        inputPlaceholder: 'CODIGO',
+        showCancelButton: true,
+        confirmButtonText: 'Aplicar',
+        cancelButtonText: 'Cancelar',
+        inputValidator: (value) => {
+            if (!value) {
+                return 'Debes ingresar un codigo';
+            }
+            return null;
+        }
+    }).then((result) => {
+        if (result.isConfirmed && result.value) {
+            aplicarCupon(carritoId, item.ProductoId, result.value.trim());
+        }
+    });
+}
+
+function aplicarCupon(carritoId, productoId, codigo) {
+    $.ajax({
+        url: '/api/carrito/aplicar-cupon',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            CarritoId: carritoId,
+            ProductoId: productoId,
+            CodigoCupon: codigo
+        }),
+        success: function () {
+            mostrarExito('Cupon aplicado', 'Se agrego el descuento al producto');
+            cargarCarrito();
+        },
+        error: function (xhr) {
+            const errorMsg = xhr.responseJSON && xhr.responseJSON.Message
+                ? xhr.responseJSON.Message
+                : 'No se pudo aplicar el cupon';
+            mostrarError(errorMsg);
+        }
+    });
+}
+
+function aplicarCuponDesdeResumen() {
+    const input = $('#input-cupon-global');
+    const codigo = (input.val() || '').trim();
+    if (!codigo) {
+        mostrarError('Ingresa un codigo de cupon');
+        return;
+    }
+
+    $.ajax({
+        url: '/api/carrito/aplicar-cupon',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ CodigoCupon: codigo }),
+        success: function () {
+            mostrarExito('Cupon aplicado', 'Se intento aplicar el cupon disponible');
+            input.val('');
+            cargarCarrito();
+        },
+        error: function (xhr) {
+            const errorMsg = xhr.responseJSON && xhr.responseJSON.Message
+                ? xhr.responseJSON.Message
+                : 'No se pudo aplicar el cupon';
+            mostrarError(errorMsg);
+        }
+    });
+}
+
+function removerCupon(carritoId) {
+    $.ajax({
+        url: '/api/carrito/remover-cupon/' + carritoId,
+        type: 'DELETE',
+        success: function () {
+            mostrarExito('Cupon removido', 'Se quito el descuento del producto');
+            cargarCarrito();
+        },
+        error: function (xhr) {
+            const errorMsg = xhr.responseJSON && xhr.responseJSON.Message
+                ? xhr.responseJSON.Message
+                : 'No se pudo remover el cupon';
+            mostrarError(errorMsg);
+        }
+    });
+}
+
+

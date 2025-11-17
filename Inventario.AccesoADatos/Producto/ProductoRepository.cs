@@ -25,6 +25,7 @@ namespace Inventario.AccesoADatos.Producto
                 Marca = nuevoProducto.Marca,
                 Precio = nuevoProducto.Precio,
                 SKU = nuevoProducto.SKU,
+                PorcentajeIVA = nuevoProducto.PorcentajeIVA,
                 CantidadEnStock = nuevoProducto.CantidadEnStock,
                 Estado = true,
                 FechaDeRegistro = DateTime.Now
@@ -44,6 +45,7 @@ namespace Inventario.AccesoADatos.Producto
                 productoEnDb.Marca = producto.Marca;
                 productoEnDb.Precio = producto.Precio;
                 productoEnDb.SKU = producto.SKU;
+                productoEnDb.PorcentajeIVA = producto.PorcentajeIVA;
                 productoEnDb.CantidadEnStock = producto.CantidadEnStock;
                 productoEnDb.Estado = producto.Estado;
                 productoEnDb.FechaDeModificacion = DateTime.Now;
@@ -78,6 +80,7 @@ namespace Inventario.AccesoADatos.Producto
                 Marca = p.Marca,
                 Precio = p.Precio,
                 SKU = p.SKU,
+                PorcentajeIVA = p.PorcentajeIVA,
                 CantidadEnStock = p.CantidadEnStock,
                 Estado = p.Estado
             };

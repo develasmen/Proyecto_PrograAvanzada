@@ -189,8 +189,12 @@
     <Compile Include="Controllers\ClientesApiController.cs" />
     <Compile Include="Controllers\ClientesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PedidosApiController.cs" />
+    <Compile Include="Controllers\PedidosController.cs" />
     <Compile Include="Controllers\ProductosApiController.cs" />
     <Compile Include="Controllers\ProductosController.cs" />
+    <Compile Include="Controllers\ErroresController.cs" />
+    <Compile Include="Controllers\CuponesController.cs" />
     <Compile Include="Controllers\SeedController.cs" />
     <Compile Include="Controllers\UsuariosController.cs" />
     <Compile Include="Global.asax.cs">
@@ -221,6 +225,9 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\DataTable\dataTables.dataTables.css" />
+    <Content Include="Content\Uploads\0001.jfif" />
+    <Content Include="Content\Uploads\202250201.jpg" />
+    <Content Include="Content\Uploads\21342342.jpg" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -265,6 +272,11 @@
     <Content Include="Views\Productos\DetallesProducto.cshtml" />
     <Content Include="Views\Productos\CrearOEditarProducto.cshtml" />
     <Content Include="Views\Productos\EliminarProducto.cshtml" />
+    <Content Include="Views\Cupones\Index.cshtml" />
+    <Content Include="Views\Cupones\CrearOEditar.cshtml" />
+    <Content Include="Views\Cupones\Eliminar.cshtml" />
+    <Content Include="Views\Errores\Http400.cshtml" />
+    <Content Include="Views\Errores\Http500.cshtml" />
     <Content Include="Views\Clientes\CrearOEditarCliente.cshtml" />
     <Content Include="Views\Clientes\ListarClientes.cshtml" />
     <Content Include="Views\Clientes\DetallesCliente.cshtml" />
@@ -275,6 +287,9 @@
     <Content Include="Views\Usuarios\UsuariosPendientes.cshtml" />
     <Content Include="Views\Usuarios\AprobarUsuario.cshtml" />
     <Content Include="Views\Usuarios\UsuariosAprobados.cshtml" />
+    <Content Include="Views\Pedidos\Index.cshtml" />
+    <Content Include="Views\Pedidos\MisPedidos.cshtml" />
+    <Content Include="Views\Pedidos\Detalle.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

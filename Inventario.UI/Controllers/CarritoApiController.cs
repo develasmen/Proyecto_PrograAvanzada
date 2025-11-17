@@ -1,14 +1,14 @@
-﻿using Inventario.Abstracciones.ModelosParaUI;
-using Inventario.LogicaDeNegocio.Carrito;
-using Microsoft.AspNet.Identity;
 using System;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Inventario.Abstracciones.ModelosParaUI;
+using Inventario.LogicaDeNegocio.Carrito;
+using Microsoft.AspNet.Identity;
 
 namespace Inventario.UI.Controllers
 {
-    [System.Web.Http.Authorize]
-    [System.Web.Http.RoutePrefix("api/carrito")]
+    [Authorize]
+    [RoutePrefix("api/carrito")]
     public class CarritoApiController : ApiController
     {
         private readonly CarritoLN _carritoLN;
@@ -18,9 +18,8 @@ namespace Inventario.UI.Controllers
             _carritoLN = new CarritoLN();
         }
 
-        // GET: api/carrito
-        [System.Web.Http.HttpGet]
-        [System.Web.Http.Route("")]
+        [HttpGet]
+        [Route("")]
         public async Task<IHttpActionResult> ObtenerCarrito()
         {
             try
@@ -35,9 +34,8 @@ namespace Inventario.UI.Controllers
             }
         }
 
-        // GET: api/carrito/resumen
-        [System.Web.Http.HttpGet]
-        [System.Web.Http.Route("resumen")]
+        [HttpGet]
+        [Route("resumen")]
         public async Task<IHttpActionResult> ObtenerResumen()
         {
             try
@@ -52,9 +50,8 @@ namespace Inventario.UI.Controllers
             }
         }
 
-        // POST: api/carrito/agregar
-        [System.Web.Http.HttpPost]
-        [System.Web.Http.Route("agregar")]
+        [HttpPost]
+        [Route("agregar")]
         public async Task<IHttpActionResult> AgregarAlCarrito([FromBody] AgregarAlCarritoRequest request)
         {
             try
@@ -64,7 +61,8 @@ namespace Inventario.UI.Controllers
 
                 var usuarioId = User.Identity.GetUserId();
                 var item = await _carritoLN.AgregarAlCarrito(usuarioId, request.ProductoId, request.Cantidad);
-                return Ok(item);
+                var resumen = await _carritoLN.ObtenerResumen(usuarioId);
+                return Ok(new { item, resumen });
             }
             catch (Exception ex)
             {
@@ -72,9 +70,8 @@ namespace Inventario.UI.Controllers
             }
         }
 
-        // PUT: api/carrito/actualizar
-        [System.Web.Http.HttpPut]
-        [System.Web.Http.Route("actualizar")]
+        [HttpPut]
+        [Route("actualizar")]
         public async Task<IHttpActionResult> ActualizarCantidad([FromBody] ActualizarCarritoRequest request)
         {
             try
@@ -82,8 +79,10 @@ namespace Inventario.UI.Controllers
                 if (request == null || request.CarritoId <= 0 || request.Cantidad <= 0)
                     return BadRequest("Datos inválidos");
 
+                var usuarioId = User.Identity.GetUserId();
                 var item = await _carritoLN.ActualizarCantidad(request.CarritoId, request.Cantidad);
-                return Ok(item);
+                var resumen = await _carritoLN.ObtenerResumen(usuarioId);
+                return Ok(new { item, resumen });
             }
             catch (Exception ex)
             {
@@ -91,9 +90,8 @@ namespace Inventario.UI.Controllers
             }
         }
 
-        // DELETE: api/carrito/eliminar/5
-        [System.Web.Http.HttpDelete]
-        [System.Web.Http.Route("eliminar/{id}")]
+        [HttpDelete]
+        [Route("eliminar/{id}")]
         public async Task<IHttpActionResult> EliminarDelCarrito(int id)
         {
             try
@@ -104,7 +102,8 @@ namespace Inventario.UI.Controllers
                 if (!resultado)
                     return NotFound();
 
-                return Ok(new { mensaje = "Producto eliminado del carrito" });
+                var resumen = await _carritoLN.ObtenerResumen(usuarioId);
+                return Ok(new { mensaje = "Producto eliminado del carrito", resumen });
             }
             catch (Exception ex)
             {
@@ -112,16 +111,16 @@ namespace Inventario.UI.Controllers
             }
         }
 
-        // DELETE: api/carrito/vaciar
-        [System.Web.Http.HttpDelete]
-        [System.Web.Http.Route("vaciar")]
+        [HttpDelete]
+        [Route("vaciar")]
         public async Task<IHttpActionResult> VaciarCarrito()
         {
             try
             {
                 var usuarioId = User.Identity.GetUserId();
                 await _carritoLN.VaciarCarrito(usuarioId);
-                return Ok(new { mensaje = "Carrito vaciado exitosamente" });
+                var resumen = await _carritoLN.ObtenerResumen(usuarioId);
+                return Ok(new { mensaje = "Carrito vaciado exitosamente", resumen });
             }
             catch (Exception ex)
             {
@@ -129,9 +128,8 @@ namespace Inventario.UI.Controllers
             }
         }
 
-        // POST: api/carrito/finalizar-compra
-        [System.Web.Http.HttpPost]
-        [System.Web.Http.Route("finalizar-compra")]
+        [HttpPost]
+        [Route("finalizar-compra")]
         public async Task<IHttpActionResult> FinalizarCompra()
         {
             try
@@ -142,7 +140,47 @@ namespace Inventario.UI.Controllers
                 if (!resultado)
                     return BadRequest("No se pudo procesar la compra");
 
-                return Ok(new { mensaje = "Compra finalizada exitosamente" });
+                var resumen = await _carritoLN.ObtenerResumen(usuarioId);
+                return Ok(new { mensaje = "Compra finalizada exitosamente", resumen });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("aplicar-cupon")]
+        public async Task<IHttpActionResult> AplicarCupon([FromBody] AplicarCuponRequest request)
+        {
+            try
+            {
+                var usuarioId = User.Identity.GetUserId();
+                var item = await _carritoLN.AplicarCupon(usuarioId, request);
+                var resumen = await _carritoLN.ObtenerResumen(usuarioId);
+                return Ok(new { item, resumen });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        [Route("remover-cupon/{carritoId}")]
+        public async Task<IHttpActionResult> RemoverCupon(int carritoId)
+        {
+            try
+            {
+                var usuarioId = User.Identity.GetUserId();
+                var resultado = await _carritoLN.RemoverCupon(carritoId, usuarioId);
+                if (!resultado)
+                {
+                    return NotFound();
+                }
+
+                var resumen = await _carritoLN.ObtenerResumen(usuarioId);
+                return Ok(new { mensaje = "Cupón removido", resumen });
             }
             catch (Exception ex)
             {
@@ -151,3 +189,4 @@ namespace Inventario.UI.Controllers
         }
     }
 }
+

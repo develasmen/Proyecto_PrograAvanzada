@@ -113,6 +113,8 @@ namespace Inventario.UI.Controllers
         }
 
         // Devuelve la imagen del producto por SKU o un placeholder si no existe
+        // Permiso anónimo para poder ver la imagen aunque no sea Admin para el catálogo
+        [AllowAnonymous]
         public ActionResult ImagenDeProductoPorSKU(string sku)
         {
             if (string.IsNullOrWhiteSpace(sku))
@@ -121,7 +123,7 @@ namespace Inventario.UI.Controllers
             }
 
             string carpeta = Server.MapPath("~/Content/Uploads");
-            string[] extensiones = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg" };
+            string[] extensiones = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".jfif" };
             foreach (var ext in extensiones)
             {
                 string ruta = Path.Combine(carpeta, sku + ext);
@@ -133,7 +135,8 @@ namespace Inventario.UI.Controllers
             }
             return PlaceholderImage();
         }
-
+        //Permiso anónimo para poder ver la imagen aunque no sea Admin para el catálogo
+        [AllowAnonymous]
         private ActionResult PlaceholderImage()
         {
             string placeholder = Server.MapPath("~/Content/Images/placeholder.svg");
@@ -149,7 +152,8 @@ namespace Inventario.UI.Controllers
             switch (ext.ToLowerInvariant())
             {
                 case ".jpg":
-                case ".jpeg": return "image/jpeg";
+                case ".jpeg":
+                case ".jfif": return "image/jpeg";
                 case ".png": return "image/png";
                 case ".gif": return "image/gif";
                 case ".webp": return "image/webp";

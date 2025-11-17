@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.Web;
 
 namespace Inventario.Abstracciones.ModelosParaUI
@@ -13,7 +14,7 @@ namespace Inventario.Abstracciones.ModelosParaUI
         public string Nombre { get; set; }
 
         [StringLength(500)]
-        [Display(Name = "Descripción")]
+        [Display(Name = "Descripcion")]
         public string Descripcion { get; set; }
 
         [Required(ErrorMessage = "La marca es obligatoria.")]
@@ -22,12 +23,23 @@ namespace Inventario.Abstracciones.ModelosParaUI
 
         [Required]
         [Range(0.01, 1000000.00, ErrorMessage = "El precio debe ser mayor a cero.")]
-        [DisplayFormat(DataFormatString = "{0:C2}")]
+        [Display(Name = "Precio base")]
         public decimal Precio { get; set; }
+
+        [Required]
+        [Range(0, 100, ErrorMessage = "El IVA debe estar entre 0% y 100%.")]
+        [Display(Name = "IVA (%)")]
+        public decimal PorcentajeIVA { get; set; } = 13m;
+
+        [Display(Name = "Monto IVA")]
+        public decimal MontoIVA => decimal.Round(Precio * (PorcentajeIVA / 100m), 2, MidpointRounding.AwayFromZero);
+
+        [Display(Name = "Precio con IVA")]
+        public decimal PrecioConImpuestos => decimal.Round(Precio + MontoIVA, 2, MidpointRounding.AwayFromZero);
 
         [Required(ErrorMessage = "El SKU es obligatorio.")]
         [StringLength(50)]
-        [Display(Name = "SKU / Código de Barras")]
+        [Display(Name = "SKU / Codigo de Barras")]
         public string SKU { get; set; }
 
         [Required]
@@ -37,7 +49,7 @@ namespace Inventario.Abstracciones.ModelosParaUI
 
         public bool Estado { get; set; }
 
-        // Propiedad agregada para el manejo de archivos
+        // Propiedad para manejar la imagen desde la vista
         public HttpPostedFileBase archivo { get; set; }
     }
 }
