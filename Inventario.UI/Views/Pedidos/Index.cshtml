@@ -105,7 +105,16 @@
                     {
                         <tr>
                             <td><strong>#@pedido.Id</strong></td>
-                            <td>@pedido.UsuarioId</td>
+                            <td>
+                                @{
+                                    var db = new Inventario.AccesoADatos.Contexto();
+                                    var nombre = db.Database.SqlQuery<string>(
+                                        "SELECT UserName FROM AspNetUsers WHERE Id = {0}",
+                                        pedido.UsuarioId
+                                    ).FirstOrDefault();
+                                }
+                                @(nombre ?? "Usuario")
+                            </td>
                             <td>@pedido.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
                             <td>₡@pedido.Subtotal.ToString("N2")</td>
                             <td>₡@pedido.Impuestos.ToString("N2")</td>

@@ -320,7 +320,26 @@
             </div>
             <div class="info-item">
                 <div class="info-label">Usuario</div>
-                <div class="info-value">@Model.UsuarioId</div>
+                <div class="info-value">
+                    @{
+                        string nombreUsuario = "Usuario desconocido";
+                        try
+                        {
+                            var dbUsuario = new Inventario.AccesoADatos.Contexto();
+                            var resultado = dbUsuario.Database.SqlQuery<string>(
+                                "SELECT UserName FROM AspNetUsers WHERE Id = @p0",
+                                Model.UsuarioId
+                            ).FirstOrDefault();
+
+                            if (!string.IsNullOrEmpty(resultado))
+                            {
+                                nombreUsuario = resultado;
+                            }
+                        }
+                        catch { }
+                    }
+                    @nombreUsuario
+                </div>
             </div>
             <div class="info-item">
                 <div class="info-label">Total</div>

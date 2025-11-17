@@ -194,15 +194,48 @@ namespace Inventario.AccesoADatos.Pedido
             return pedidoDto;
         }
 
-        // Cambiar estado de un pedido
+        // Cambiar el estado de un pedido (Completado o Rechazado)
         public bool CambiarEstado(int pedidoId, string nuevoEstado)
         {
-            var pedido = _contexto.Pedidos.Find(pedidoId);
+            // Obtener el pedido con sus detalles y sus productos
+            var pedido = _contexto.Pedidos
+                .Include(p => p.Detalles)
+                .Include(p => p.Detalles.Select(d => d.Producto))
+                .FirstOrDefault(p => p.Id == pedidoId);
+
             if (pedido == null)
                 return false;
 
+            string estadoAnterior = pedido.Estado;
+
+            // En caso de que se cancele un pedido que NO estaba cancelado antes, devolver el stock
+            if (nuevoEstado == "Cancelado" && estadoAnterior != "Cancelado")
+            {
+                foreach (var detalle in pedido.Detalles)
+                {
+                    var producto = detalle.Producto;
+
+                    // Devolver la cantidad al stock de la BD
+                    producto.CantidadEnStock += detalle.Cantidad;
+                    producto.FechaDeModificacion = DateTime.Now;
+                }
+
+                // También decrementar el contador de cupones si se usaron
+                var detallesConCupon = pedido.Detalles
+                    .Join(_contexto.Carritos.Where(c => c.CuponDescuentoId.HasValue),
+                          d => d.ProductoId,
+                          c => c.ProductoId,
+                          (d, c) => c.CuponDescuentoId)
+                    .Distinct()
+                    .ToList();
+
+                // Nota: Como el carrito ya se vació, los cupones no pueden ser revertidos
+            }
+
+            // Cambiar el estado
             pedido.Estado = nuevoEstado;
             _contexto.SaveChanges();
+
             return true;
         }
 
