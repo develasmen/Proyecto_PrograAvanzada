@@ -188,6 +188,7 @@
     <Compile Include="Controllers\CatalogoController.cs" />
     <Compile Include="Controllers\ClientesApiController.cs" />
     <Compile Include="Controllers\ClientesController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProductosApiController.cs" />
     <Compile Include="Controllers\ProductosController.cs" />
@@ -275,6 +276,8 @@
     <Content Include="Views\Usuarios\UsuariosPendientes.cshtml" />
     <Content Include="Views\Usuarios\AprobarUsuario.cshtml" />
     <Content Include="Views\Usuarios\UsuariosAprobados.cshtml" />
+    <Content Include="Views\Error\NotFound.cshtml" />
+    <Content Include="Views\Error\ServerError.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
