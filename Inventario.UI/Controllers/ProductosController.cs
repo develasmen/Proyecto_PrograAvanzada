@@ -120,7 +120,7 @@ namespace Inventario.UI.Controllers
                 return PlaceholderImage();
             }
 
-            string carpeta = Server.MapPath("~/Content/Uploads");
+            string carpeta = Server.MapPath("~/Content/Upload");
             string[] extensiones = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg" };
             foreach (var ext in extensiones)
             {
@@ -160,22 +160,69 @@ namespace Inventario.UI.Controllers
 
         private void GuardarArchivo(HttpPostedFileBase archivo, string nombreBase)
         {
-            if (archivo == null || archivo.ContentLength <= 0 || string.IsNullOrWhiteSpace(nombreBase))
-                return;
+            // 🔍 DEBUG
+            System.Diagnostics.Debug.WriteLine("═══════════════════════════════");
+            System.Diagnostics.Debug.WriteLine("🔍 MÉTODO GuardarArchivo LLAMADO");
+            System.Diagnostics.Debug.WriteLine($"📄 Archivo es null?: {archivo == null}");
 
-            string carpeta = Server.MapPath("~/Content/Uploads");
-            if (!Directory.Exists(carpeta)) Directory.CreateDirectory(carpeta);
+            if (archivo != null)
+            {
+                System.Diagnostics.Debug.WriteLine($"📄 ContentLength: {archivo.ContentLength}");
+                System.Diagnostics.Debug.WriteLine($"📄 FileName: {archivo.FileName}");
+            }
+
+            System.Diagnostics.Debug.WriteLine($"📝 nombreBase (SKU): {nombreBase}");
+
+            if (archivo == null || archivo.ContentLength <= 0 || string.IsNullOrWhiteSpace(nombreBase))
+            {
+                System.Diagnostics.Debug.WriteLine("❌ SALIENDO: archivo nulo, vacío o sin nombreBase");
+                System.Diagnostics.Debug.WriteLine("═══════════════════════════════");
+                return;
+            }
+
+            string carpeta = Server.MapPath("~/Content/Upload");
+            System.Diagnostics.Debug.WriteLine($"📂 Carpeta destino: {carpeta}");
+            System.Diagnostics.Debug.WriteLine($"📂 Carpeta existe?: {Directory.Exists(carpeta)}");
+
+            if (!Directory.Exists(carpeta))
+            {
+                Directory.CreateDirectory(carpeta);
+                System.Diagnostics.Debug.WriteLine("✅ Carpeta creada");
+            }
 
             string extension = Path.GetExtension(archivo.FileName);
             if (string.IsNullOrEmpty(extension)) extension = ".png";
             string rutaDestino = Path.Combine(carpeta, nombreBase + extension.ToLowerInvariant());
 
+            System.Diagnostics.Debug.WriteLine($"💾 Ruta destino completa: {rutaDestino}");
+
+            // Borrar archivos anteriores con el mismo nombreBase
             foreach (var existente in Directory.GetFiles(carpeta, nombreBase + ".*"))
             {
-                try { System.IO.File.Delete(existente); } catch { }
+                try
+                {
+                    System.IO.File.Delete(existente);
+                    System.Diagnostics.Debug.WriteLine($"🗑️ Eliminado: {existente}");
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"⚠️ Error al eliminar: {ex.Message}");
+                }
             }
 
-            archivo.SaveAs(rutaDestino);
+            try
+            {
+                archivo.SaveAs(rutaDestino);
+                System.Diagnostics.Debug.WriteLine("✅✅✅ ARCHIVO GUARDADO EXITOSAMENTE");
+                System.Diagnostics.Debug.WriteLine($"✅ Verificando: Archivo existe? {System.IO.File.Exists(rutaDestino)}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"❌❌❌ ERROR AL GUARDAR: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"StackTrace: {ex.StackTrace}");
+            }
+
+            System.Diagnostics.Debug.WriteLine("═══════════════════════════════");
         }
     }
 }

@@ -155,6 +155,12 @@
         margin-bottom: 1rem;
     }
 
+        .producto-imagen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
     .producto-info h3 {
         font-size: 1.15rem;
         margin-bottom: 0.2rem;
@@ -435,7 +441,10 @@
                 {
                     <div class="producto-card" data-producto-id="@producto.Id">
                         <div class="producto-imagen">
-                            <i class="fas fa-box"></i>
+                            <img src="@Url.Action("ImagenDeProductoPorSKU", "Productos", new { sku = producto.SKU })"
+                                 alt="@producto.Nombre"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                            <i class="fas fa-box" style="display:none;"></i>
                         </div>
                         <div class="producto-info">
                             <h3>@producto.Nombre</h3>
