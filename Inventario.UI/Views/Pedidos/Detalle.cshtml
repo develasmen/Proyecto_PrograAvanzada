@@ -1,0 +1,482 @@
+﻿@model Inventario.Abstracciones.ModelosParaUI.PedidoDto
+
+@{
+    ViewBag.Title = "Detalle del Pedido #" + Model.Id;
+}
+
+<style>
+    .pedido-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .pedido-header h1 {
+        margin: 0;
+        font-size: 2rem;
+    }
+
+    .pedido-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .info-item {
+        background: rgba(255,255,255,0.2);
+        padding: 1rem;
+        border-radius: 12px;
+    }
+
+    .info-label {
+        font-size: 0.85rem;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-value {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-top: 0.5rem;
+    }
+
+    .estado-badge {
+        display: inline-block;
+        padding: 0.5rem 1.5rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .estado-pendiente {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .estado-completado {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .estado-cancelado {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .detalles-section {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #ecf0f1;
+    }
+
+    .producto-item {
+        display: grid;
+        grid-template-columns: auto 1fr auto auto;
+        gap: 1.5rem;
+        align-items: center;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+    }
+
+    .producto-cantidad {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+        min-width: 50px;
+        text-align: center;
+    }
+
+    .producto-info h4 {
+        margin: 0 0 0.25rem 0;
+        color: #2c3e50;
+    }
+
+    .producto-precio {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+
+    .producto-descuento {
+        color: #e74c3c;
+        font-size: 0.85rem;
+    }
+
+    .producto-iva {
+        color: #3498db;
+        font-size: 0.85rem;
+    }
+
+    .producto-total {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #27ae60;
+        text-align: right;
+        min-width: 120px;
+    }
+
+    .totales-resumen {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .resumen-linea {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        font-size: 1.1rem;
+    }
+
+    .resumen-linea.total {
+        border-top: 2px solid #dee2e6;
+        margin-top: 0.5rem;
+        padding-top: 1rem;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #27ae60;
+    }
+
+    .btn-actions {
+        margin-top: 2rem;
+    }
+
+    .imprimir-btn {
+        margin-left: 0.5rem;
+    }
+
+    /* Doble arroba para que lo interprete como CSS/JS y no como Razor*/
+    @@media print {
+        /* Ocultar elementos innecesarios */
+        .btn-actions,
+        .sidebar,
+        nav,
+        footer {
+            display: none !important;
+        }
+
+        /* Configuración de página */
+        @@page {
+            size: letter;
+            margin: 1.5cm;
+        }
+
+        /* Resetear estilos del body */
+        body {
+            margin: 0;
+            padding: 0;
+            background: white !important;
+        }
+
+        .content {
+            margin-left: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        .container-fluid {
+            padding: 0 !important;
+            max-width: 100% !important;
+        }
+
+        /* Header del pedido */
+        .pedido-header {
+            background: #667eea !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            page-break-after: avoid;
+            margin-bottom: 1rem !important;
+            padding: 1.5rem !important;
+        }
+
+        .pedido-info {
+            font-size: 0.9rem !important;
+        }
+
+        .info-value {
+            font-size: 1rem !important;
+        }
+
+        /* Sección de detalles */
+        .detalles-section {
+            page-break-inside: avoid;
+            box-shadow: none !important;
+            border: 1px solid #ddd;
+            padding: 1rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        .section-title {
+            font-size: 1.2rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        /* Items de producto más compactos */
+        .producto-item {
+            padding: 0.75rem !important;
+            margin-bottom: 0.5rem !important;
+            page-break-inside: avoid;
+            font-size: 0.9rem;
+        }
+
+        .producto-cantidad {
+            font-size: 1.2rem !important;
+        }
+
+        .producto-info h4 {
+            font-size: 1rem !important;
+        }
+
+        .producto-precio,
+        .producto-descuento,
+        .producto-iva {
+            font-size: 0.8rem !important;
+        }
+
+        .producto-total {
+            font-size: 1.1rem !important;
+        }
+
+        /* Totales más compactos */
+        .totales-resumen {
+            padding: 1rem !important;
+            page-break-inside: avoid;
+        }
+
+        .resumen-linea {
+            font-size: 1rem !important;
+            padding: 0.5rem 0 !important;
+        }
+
+            .resumen-linea.total {
+                font-size: 1.3rem !important;
+                padding-top: 0.75rem !important;
+            }
+
+        /* Forzar colores en impresión */
+        .estado-badge {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .estado-pendiente {
+            background: #fff3cd !important;
+            color: #856404 !important;
+            border: 1px solid #856404;
+        }
+
+        .estado-completado {
+            background: #d4edda !important;
+            color: #155724 !important;
+            border: 1px solid #155724;
+        }
+
+        .estado-cancelado {
+            background: #f8d7da !important;
+            color: #721c24 !important;
+            border: 1px solid #721c24;
+        }
+
+        /* Productos en grid más compacto */
+        .producto-item {
+            grid-template-columns: 60px 1fr 120px !important;
+            gap: 0.75rem !important;
+        }
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Header del Pedido -->
+    <div class="pedido-header">
+        <h1><i class="fas fa-receipt"></i> Pedido #@Model.Id</h1>
+        <div class="pedido-info">
+            <div class="info-item">
+                <div class="info-label">Fecha</div>
+                <div class="info-value">@Model.Fecha.ToString("dd/MM/yyyy HH:mm")</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Estado</div>
+                <div class="info-value">
+                    <span class="estado-badge estado-@Model.Estado.ToLower()">
+                        @Model.Estado
+                    </span>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Usuario</div>
+                <div class="info-value">
+                    @{
+                        string nombreUsuario = "Usuario desconocido";
+                        try
+                        {
+                            var dbUsuario = new Inventario.AccesoADatos.Contexto();
+                            var resultado = dbUsuario.Database.SqlQuery<string>(
+                                "SELECT UserName FROM AspNetUsers WHERE Id = @p0",
+                                Model.UsuarioId
+                            ).FirstOrDefault();
+
+                            if (!string.IsNullOrEmpty(resultado))
+                            {
+                                nombreUsuario = resultado;
+                            }
+                        }
+                        catch { }
+                    }
+                    @nombreUsuario
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Total</div>
+                <div class="info-value">₡@Model.Total.ToString("N2")</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detalles de Productos -->
+    <div class="detalles-section">
+        <h2 class="section-title">
+            <i class="fas fa-box"></i> Productos del Pedido
+        </h2>
+
+        @foreach (var detalle in Model.Detalles)
+        {
+            <div class="producto-item">
+                <div class="producto-cantidad">
+                    @detalle.Cantidad×
+                </div>
+                <div class="producto-info">
+                    <h4>@detalle.NombreProducto</h4>
+                    <div class="producto-precio">
+                        Precio unitario: ₡@detalle.PrecioUnit.ToString("N2")
+                    </div>
+                    @if (detalle.Descuento > 0)
+                    {
+                        <div class="producto-descuento">
+                            <i class="fas fa-tag"></i> Descuento: -₡@detalle.Descuento.ToString("N2")
+                        </div>
+                    }
+                    <div class="producto-iva">
+                        <i class="fas fa-percent"></i> IVA (@detalle.ImpuestoPorc%):
+                        ₡@((detalle.PrecioUnit * detalle.Cantidad * detalle.ImpuestoPorc / 100).ToString("N2"))
+                    </div>
+                </div>
+                <div class="producto-total">
+                    ₡@detalle.TotalLinea.ToString("N2")
+                </div>
+            </div>
+        }
+
+        <!-- Resumen de Totales -->
+        <div class="totales-resumen">
+            <div class="resumen-linea">
+                <span>Subtotal:</span>
+                <span>₡@Model.Subtotal.ToString("N2")</span>
+            </div>
+            <div class="resumen-linea">
+                <span>Impuestos (IVA):</span>
+                <span>₡@Model.Impuestos.ToString("N2")</span>
+            </div>
+            @if (Model.Detalles.Sum(d => d.Descuento) > 0)
+            {
+                <div class="resumen-linea" style="color: #e74c3c;">
+                    <span>Descuentos:</span>
+                    <span>-₡@Model.Detalles.Sum(d => d.Descuento).ToString("N2")</span>
+                </div>
+            }
+            <div class="resumen-linea total">
+                <span>TOTAL:</span>
+                <span>₡@Model.Total.ToString("N2")</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botones de Acción -->
+    <div class="btn-actions">
+        @if (User.IsInRole("Administrador"))
+        {
+            <a href="@Url.Action("Index", "Pedidos")" class="btn btn-secondary btn-lg">
+                <i class="fas fa-arrow-left"></i> Volver a Pedidos
+            </a>
+
+            if (Model.Estado == "Pendiente")
+            {
+                <button onclick="cambiarEstado(@Model.Id, 'Completado')" class="btn btn-success btn-lg">
+                    <i class="fas fa-check"></i> Marcar como Completado
+                </button>
+                <button onclick="cambiarEstado(@Model.Id, 'Cancelado')" class="btn btn-danger btn-lg">
+                    <i class="fas fa-times"></i> Cancelar Pedido
+                </button>
+            }
+        }
+        else
+        {
+            <a href="@Url.Action("MisPedidos", "Pedidos")" class="btn btn-secondary btn-lg">
+                <i class="fas fa-arrow-left"></i> Volver a Mis Pedidos
+            </a>
+        }
+
+        <button onclick="window.print()" class="btn btn-primary btn-lg imprimir-btn">
+            <i class="fas fa-print"></i> Imprimir
+        </button>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        function cambiarEstado(pedidoId, nuevoEstado) {
+            Swal.fire({
+                title: '¿Cambiar estado?',
+                text: `Se cambiará el estado del pedido a ${nuevoEstado}`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, cambiar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/api/pedidos/${pedidoId}/estado`,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ Estado: nuevoEstado }),
+                        success: function() {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Estado actualizado',
+                                text: 'El estado del pedido ha sido actualizado',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: xhr.responseJSON ? xhr.responseJSON.Message : 'No se pudo actualizar el estado'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

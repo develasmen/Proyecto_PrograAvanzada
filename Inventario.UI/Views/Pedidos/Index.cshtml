@@ -1,0 +1,222 @@
+﻿@model List<Inventario.Abstracciones.ModelosParaUI.PedidoDto>
+
+@{
+    ViewBag.Title = "Gestión de Pedidos";
+}
+
+<style>
+    .pedidos-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+        .stat-card h3 {
+            margin: 0;
+            font-size: 2rem;
+            color: #2c3e50;
+        }
+
+        .stat-card p {
+            margin: 0.5rem 0 0 0;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+    .estado-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .estado-pendiente {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .estado-completado {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .estado-cancelado {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .btn-estado {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.85rem;
+        margin-right: 0.25rem;
+    }
+</style>
+
+<div class="container-fluid">
+    <h1><i class="fas fa-shopping-cart"></i> Gestión de Pedidos</h1>
+    <hr />
+
+    <!-- Estadísticas de los pedidos -->
+    <div class="pedidos-stats" id="estadisticas">
+        <div class="stat-card">
+            <h3 id="stat-total">-</h3>
+            <p>Total de Pedidos</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="stat-pendientes">-</h3>
+            <p>Pendientes</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="stat-completados">-</h3>
+            <p>Completados</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="stat-ventas">₡0.00</h3>
+            <p>Total en Ventas</p>
+        </div>
+    </div>
+
+    <!-- Tabla de todos los pedidos -->
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-hover" id="tablaPedidos">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Fecha</th>
+                        <th>Subtotal</th>
+                        <th>Impuestos</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var pedido in Model)
+                    {
+                        <tr>
+                            <td><strong>#@pedido.Id</strong></td>
+                            <td>
+                                @{
+                                    var db = new Inventario.AccesoADatos.Contexto();
+                                    var nombre = db.Database.SqlQuery<string>(
+                                        "SELECT UserName FROM AspNetUsers WHERE Id = {0}",
+                                        pedido.UsuarioId
+                                    ).FirstOrDefault();
+                                }
+                                @(nombre ?? "Usuario")
+                            </td>
+                            <td>@pedido.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>₡@pedido.Subtotal.ToString("N2")</td>
+                            <td>₡@pedido.Impuestos.ToString("N2")</td>
+                            <td><strong>₡@pedido.Total.ToString("N2")</strong></td>
+                            <td>
+                                <span class="estado-badge estado-@pedido.Estado.ToLower()">
+                                    @pedido.Estado
+                                </span>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Detalle", new { id = pedido.Id })"
+                                   class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i> Ver
+                                </a>
+                                @if (pedido.Estado == "Pendiente")
+                                {
+                                    <button onclick="cambiarEstado(@pedido.Id, 'Completado')"
+                                            class="btn btn-sm btn-success btn-estado">
+                                        <i class="fas fa-check"></i> Completar
+                                    </button>
+                                    <button onclick="cambiarEstado(@pedido.Id, 'Cancelado')"
+                                            class="btn btn-sm btn-danger btn-estado">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function() {
+            // Inicializar DataTable
+            $('#tablaPedidos').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+                },
+                order: [[0, 'desc']]
+            });
+
+            // Cargar las estadísticas
+            cargarEstadisticas();
+        });
+
+        function cargarEstadisticas() {
+            $.ajax({
+                url: '/api/pedidos/estadisticas',
+                type: 'GET',
+                success: function(data) {
+                    $('#stat-total').text(data.TotalPedidos);
+                    $('#stat-pendientes').text(data.PedidosPendientes);
+                    $('#stat-completados').text(data.PedidosCompletados);
+                    $('#stat-ventas').text('₡' + data.TotalVentas.toFixed(2));
+                },
+                error: function(xhr) {
+                    console.error('Error al cargar estadísticas:', xhr);
+                }
+            });
+        }
+
+        function cambiarEstado(pedidoId, nuevoEstado) {
+            Swal.fire({
+                title: '¿Cambiar estado?',
+                text: `Se cambiará el estado a ${nuevoEstado}`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, cambiar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/api/pedidos/${pedidoId}/estado`,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ Estado: nuevoEstado }),
+                        success: function() {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Estado actualizado',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'No se pudo actualizar el estado'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

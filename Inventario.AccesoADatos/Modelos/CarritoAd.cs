@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -25,10 +25,21 @@ namespace Inventario.AccesoADatos.Modelos
         [Required]
         public decimal Subtotal { get; set; }
 
+        public decimal PorcentajeIVA { get; set; }
+
+        public decimal PorcentajeDescuento { get; set; }
+
+        public decimal MontoDescuento { get; set; }
+
+        public int? CuponDescuentoId { get; set; }
+
         public DateTime FechaAgregado { get; set; }
 
-        // Propiedades para la navegación
         [ForeignKey("ProductoId")]
         public virtual ProductoAD Producto { get; set; }
+
+        [ForeignKey("CuponDescuentoId")]
+        public virtual CuponDescuentoAD Cupon { get; set; }
     }
 }
+
