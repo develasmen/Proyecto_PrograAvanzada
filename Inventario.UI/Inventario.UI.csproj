@@ -293,6 +293,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\Upload\" />
     <Folder Include="Models\" />
     <Folder Include="Views\CarritoAPI\" />
   </ItemGroup>
