@@ -173,6 +173,24 @@
                         @Html.ActionLink("📋 Mis Pedidos", "MisPedidos", "Pedidos", new { area = "" }, new { @class = "nav-link text-white" })
                     </li>
                 }
+                <li style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.15);">
+                    <a href="@Url.Action("Sucursales", "Info")">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <span>Sucursales</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("TerminosCondiciones", "Info")">
+                        <i class="fas fa-file-contract"></i>
+                        <span>Terminos y Condiciones</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("AcercaDe", "Info")">
+                        <i class="fas fa-building"></i>
+                        <span>Acerca de</span>
+                    </a>
+                </li>
             </ul>
         </nav>
         <div class="user-section">
