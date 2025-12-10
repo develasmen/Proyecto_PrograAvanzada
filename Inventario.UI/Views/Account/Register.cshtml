@@ -18,6 +18,10 @@
         display: flex;
     }
 
+    /* Oculta la línea horizontal del layout en esta vista */
+    .content > hr {
+        display: none;
+    }
 
     .content {
         flex: 1;
@@ -131,7 +135,6 @@
                     {
                         @Html.AntiForgeryToken()
                         <h4 class="mb-4 text-center">Regístrate para acceder a Pedidos360</h4>
-                        <hr />
                         @Html.ValidationSummary("", new { @class = "text-danger" })
 
                         <div class="row">
@@ -213,3 +216,4 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
+
