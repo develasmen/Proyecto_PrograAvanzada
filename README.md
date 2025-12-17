@@ -181,6 +181,8 @@ SET EstadoAprobacion = 'Aprobado'
 WHERE UserName = 'Admin';
 GO
 
+# ***IMPORTANTE*** Antes de clonar el proyecto, verificar que se está en la branch o rama llamada "JeffersonAnchia", ya que la master está corrupta y no se le encontró solución.
+
 # Una vez se tiene la base de datos completamente creada, se debe abrir la solución del proyecto en Visual Studio y cambiar dentro del archivo "Web.config" el connectionStrings
 # dependiendo de nuestro tipo de conexión ya sea SQL Server, SQL Express, etc.
 
